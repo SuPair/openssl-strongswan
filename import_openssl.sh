@@ -402,12 +402,11 @@ print_defines_in_mk() {
 
 # Generate a configuration file like Crypto-config.mk
 # This uses variable definitions from openssl.config to build a config
-# file that can compute the list of target- and host-specific sources /
+# file that can compute the list of target-specific sources /
 # compiler flags for a given component.
 #
 # $1: Target file name.  (e.g. Crypto-config.mk)
 # $2: Variable prefix.   (e.g. CRYPTO)
-# $3: "host" or "target"
 function generate_config_mk() {
   declare -r output="$1"
   declare -r prefix="$2"
@@ -470,33 +469,16 @@ ifdef ARCH_MIPS_REV6
 mips_cflags := \$(mips32r6_cflags)
 mips_src_files := \$(mips32r6_src_files)
 mips_exclude_files := \$(mips32r6_exclude_files)
-endif"
+endif
 
-    if [ $3 == "target" ]; then
-      echo "
 LOCAL_CFLAGS += \$(common_cflags)
 LOCAL_C_INCLUDES += \$(common_c_includes)"
-      for arch in $all_archs; do
-        echo "
+    for arch in $all_archs; do
+      echo "
 LOCAL_SRC_FILES_${arch} += \$(filter-out \$(${arch}_exclude_files),\$(common_src_files) \$(${arch}_src_files))
 LOCAL_CFLAGS_${arch} += \$(${arch}_cflags)
 LOCAL_CLANG_ASFLAGS_${arch} += \$(${arch}_clang_asflags)"
-      done
-    else
-      echo "
-LOCAL_CFLAGS += \$(common_cflags)
-LOCAL_C_INCLUDES += \$(common_c_includes) \$(local_c_includes)
-
-ifeq (\$(HOST_OS),linux)
-LOCAL_CFLAGS_x86 += \$(x86_cflags)
-LOCAL_SRC_FILES_x86 += \$(filter-out \$(x86_exclude_files), \$(common_src_files) \$(x86_src_files))
-LOCAL_CFLAGS_x86_64 += \$(x86_64_cflags)
-LOCAL_SRC_FILES_x86_64 += \$(filter-out \$(x86_64_exclude_files), \$(common_src_files) \$(x86_64_src_files))
-else
-\$(warning Unknown host OS \$(HOST_OS))
-LOCAL_SRC_FILES += \$(common_src_files)
-endif"
-    fi
+    done
   ) > "$output"
 }
 
@@ -614,9 +596,8 @@ function import() {
 
   cd ..
 
-  generate_config_mk Crypto-config-target.mk CRYPTO target
-  generate_config_mk Crypto-config-host.mk CRYPTO host
-  generate_config_mk Crypto-config-trusty.mk CRYPTO_TRUSTY target
+  generate_config_mk Crypto-config-target.mk CRYPTO
+  generate_config_mk Crypto-config-trusty.mk CRYPTO_TRUSTY
 
   # Prune unnecessary sources
   prune
