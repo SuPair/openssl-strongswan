@@ -426,11 +426,9 @@ function generate_config_mk() {
 #    LOCAL_SRC_FILES_\$(TARGET_2ND_ARCH)
 #    LOCAL_CFLAGS_\$(TARGET_ARCH)
 #    LOCAL_CFLAGS_\$(TARGET_2ND_ARCH)
-#    LOCAL_ADDITIONAL_DEPENDENCIES"
-if [ $prefix != "APPS" ] ; then
-    echo "#    LOCAL_EXPORT_C_INCLUDE_DIRS"
-fi
-echo "
+#    LOCAL_ADDITIONAL_DEPENDENCIES
+#    LOCAL_EXPORT_C_INCLUDE_DIRS
+
 
 LOCAL_ADDITIONAL_DEPENDENCIES += \$(LOCAL_PATH)/$(basename $output)
 "
@@ -465,12 +463,9 @@ LOCAL_ADDITIONAL_DEPENDENCIES += \$(LOCAL_PATH)/$(basename $output)
 x86_64_cflags += -DRC4_INT=\"unsigned int\""
     fi
 
-    if [ $prefix != "APPS" ] ; then
-      echo "
-LOCAL_EXPORT_C_INCLUDE_DIRS := \$(LOCAL_PATH)/include"
-    fi
-
     echo "
+LOCAL_EXPORT_C_INCLUDE_DIRS := \$(LOCAL_PATH)/include
+
 ifdef ARCH_MIPS_REV6
 mips_cflags := \$(mips32r6_cflags)
 mips_src_files := \$(mips32r6_src_files)
@@ -622,10 +617,6 @@ function import() {
   generate_config_mk Crypto-config-target.mk CRYPTO target
   generate_config_mk Crypto-config-host.mk CRYPTO host
   generate_config_mk Crypto-config-trusty.mk CRYPTO_TRUSTY target
-  generate_config_mk Ssl-config-target.mk SSL target
-  generate_config_mk Ssl-config-host.mk SSL host
-  generate_config_mk Apps-config-target.mk APPS target
-  generate_config_mk Apps-config-host.mk APPS host
 
   # Prune unnecessary sources
   prune
