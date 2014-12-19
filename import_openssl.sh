@@ -464,7 +464,7 @@ mips_exclude_files := \$(mips32r6_exclude_files)
 endif
 
 LOCAL_CFLAGS += \$(common_cflags)
-LOCAL_C_INCLUDES += \$(common_c_includes)"
+LOCAL_C_INCLUDES += \$(patsubst external/openssl/%,\$(LOCAL_PATH)/%,\$(common_c_includes))"
     for arch in $all_archs; do
       echo "
 LOCAL_SRC_FILES_${arch} := \$(filter-out \$(${arch}_exclude_files),\$(common_src_files) \$(${arch}_src_files))
