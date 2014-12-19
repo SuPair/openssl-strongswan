@@ -467,7 +467,7 @@ LOCAL_CFLAGS += \$(common_cflags)
 LOCAL_C_INCLUDES += \$(common_c_includes)"
     for arch in $all_archs; do
       echo "
-LOCAL_SRC_FILES_${arch} += \$(filter-out \$(${arch}_exclude_files),\$(common_src_files) \$(${arch}_src_files))
+LOCAL_SRC_FILES_${arch} := \$(filter-out \$(${arch}_exclude_files),\$(common_src_files) \$(${arch}_src_files))
 LOCAL_CFLAGS_${arch} += \$(${arch}_cflags)
 LOCAL_CLANG_ASFLAGS_${arch} += \$(${arch}_clang_asflags)"
     done
