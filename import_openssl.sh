@@ -50,8 +50,12 @@ function usage() {
   fi
   echo "Usage:"
   echo "  ./import_openssl.sh import </path/to/openssl-*.tar.gz>"
+  echo "  ./import_openssl.sh untar </path/to/openssl-*.tar.gz>"
+  echo "  ./import_openssl.sh apply <patch/*.patch>"
+  echo "  ./import_openssl.sh update"
   echo "  ./import_openssl.sh regenerate <patch/*.patch>"
   echo "  ./import_openssl.sh generate <patch/*.patch> </path/to/openssl-*.tar.gz>"
+  echo "  ./import_openssl.sh regenerate-all </path/to/openssl-*.tar.gz>"
   exit 1
 }
 
@@ -82,11 +86,25 @@ function main() {
   fi
 
   declare -r command=$1
-  shift || usage "No command specified. Try import, regenerate, or generate."
+  shift || usage "No command specified. Try import, untar, apply, update, regenerate, generate, or regenerate-all."
   if [ "$command" = "import" ]; then
     declare -r tar=$1
     shift || usage "No tar file specified."
     import $tar
+  elif [ "$command" = "untar" ]; then
+    declare -r tar=$1
+    shift || usage "No tar file specified."
+    untar $tar
+  elif [ "$command" = "apply" ]; then
+    declare -r patch=$1
+    shift || usage "No patch file specified."
+    [ -d $OPENSSL_DIR ] || usage "$OPENSSL_DIR not found, did you forget to untar?"
+    [ -d $OPENSSL_DIR_ORIG ] || usage "$OPENSSL_DIR_ORIG not found, did you forget to untar?"
+    applypatch $patch
+  elif [ "$command" = "update" ]; then
+    [ -d $OPENSSL_DIR ] || usage "$OPENSSL_DIR not found, did you forget to untar?"
+    [ -d $OPENSSL_DIR_ORIG ] || usage "$OPENSSL_DIR_ORIG not found, did you forget to untar?"
+    update
   elif [ "$command" = "regenerate" ]; then
     declare -r patch=$1
     shift || usage "No patch file specified."
@@ -99,8 +117,12 @@ function main() {
     declare -r tar=$1
     shift || usage "No tar file specified."
     generate $patch $tar
+  elif [ "$command" = "regenerate-all" ]; then
+    declare -r tar=$1
+    shift || usage "No tar file specified."
+    regenerate_all $tar
   else
-    usage "Unknown command specified $command. Try import, regenerate, or generate."
+    usage "Unknown command specified $command. Try import, untar, apply, update, regenerate, generate, or regenerate-all."
   fi
 }
 
@@ -603,6 +625,26 @@ function import() {
   cleantar
 }
 
+function update() {
+  rm -rf $OPENSSL_DIR_ORIG
+  cp -RfP $OPENSSL_DIR $OPENSSL_DIR_ORIG
+}
+
+function regenerate_all() {
+  declare -r tar=$1
+  
+  untar $1 || die
+
+  ls patches/[0-9][0-9][0-9][0-9]-*.patch &>/dev/null && {
+    patches=(patches/[0-9][0-9][0-9][0-9]-*.patch)
+    for i in "${patches[@]}"; do
+      applypatch $i || die
+      regenerate $i || die
+      update || die
+    done
+  }
+}
+
 function regenerate() {
   declare -r patch=$1
 
@@ -653,8 +695,8 @@ function untar() {
   cleantar
 
   # Process new source
-  tar -zxf $OPENSSL_SOURCE
-  cp -RfP $OPENSSL_DIR $OPENSSL_DIR_ORIG
+  tar -zxf $OPENSSL_SOURCE || die
+  cp -RfP $OPENSSL_DIR $OPENSSL_DIR_ORIG || die
   if [ ! -z $readonly ]; then
     find $OPENSSL_DIR_ORIG -type f -print0 | xargs -0 chmod a-w
   fi
@@ -671,6 +713,16 @@ function cleantar() {
   rm -rf $OPENSSL_DIR
 }
 
+function applypatch () {
+    declare -r patch=$1
+
+    echo "Applying patch $patch"
+    patch -p1 -d $OPENSSL_DIR < $patch || die "Could not apply $patch. Fix source and run: $0 regenerate $patch"
+
+    # Cleanup patch output
+    find $OPENSSL_DIR \( -type f -o -type l \) -name "*.orig" -print0 | xargs -0 rm -f
+}
+
 function applypatches () {
   declare -r dir=$1
   declare -r skip_patch=$2
@@ -678,16 +730,17 @@ function applypatches () {
   cd $dir
 
   # Apply appropriate patches
-  patches=(../patches/[0-9][0-9][0-9][0-9]-*.patch)
-  for i in "${patches[@]}"; do
-    if [[ $skip_patch != ${i##*/} ]]; then
-      echo "Applying patch $i"
-      patch -p1 < $i || die "Could not apply $i. Fix source and run: $0 regenerate patches/${i##*/}"
-    else
-      echo "Skiping patch ${i##*/}"
-    fi
-
-  done
+  ls ../patches/[0-9][0-9][0-9][0-9]-*.patch &>/dev/null && {
+      patches=(../patches/[0-9][0-9][0-9][0-9]-*.patch)
+      for i in "${patches[@]}"; do
+        if [[ $skip_patch != ${i##*/} ]]; then
+          echo "Applying patch $i"
+          patch -p1 < $i || die "Could not apply $i. Fix source and run: $0 regenerate patches/${i##*/}"
+        else
+          echo "Skiping patch ${i##*/}"
+        fi
+      done
+  }
 
   # Cleanup patch output
   find . \( -type f -o -type l \) -name "*.orig" -print0 | xargs -0 rm -f
@@ -703,12 +756,12 @@ function generatepatch() {
   find $OPENSSL_DIR -type f -name "*~" -print0 | xargs -0 rm -f
 
   # Find the files the patch touches and only keep those in the output patch
-  declare -r sources=`patch -p1 --dry-run -d $OPENSSL_DIR < $patch  | awk '/^patching file / { print $3 }'`
+  declare -r sources=`patch -p1 --dry-run -d $OPENSSL_DIR_ORIG < $patch  | awk '/^(patching|checking) file / { print $3 }'`
 
   rm -f $patch
   touch $patch
   for i in $sources; do
-    LC_ALL=C TZ=UTC0 diff -aup $OPENSSL_DIR_ORIG/$i $OPENSSL_DIR/$i >> $patch && die "ERROR: No diff for patch $path in file $i"
+    LC_ALL=C TZ=UTC0 diff -Naup $OPENSSL_DIR_ORIG/$i $OPENSSL_DIR/$i >> $patch && die "ERROR: No diff for patch $path in file $i"
   done
   echo "Generated patch $patch"
   echo "NOTE To make sure there are not unwanted changes from conflicting patches, be sure to review the generated patch."
