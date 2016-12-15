@@ -237,7 +237,7 @@ function check_asm_flags() {
 }
 
 # Run Configure and generate headers
-# $1: 32 for 32-bit arch, 64 for 64-bit arch, trusty for Trusty
+# $1: 32 for 32-bit arch, 64 for 64-bit arch
 # $2: 1 if building for static version
 # Out: returns the cflags and depflags in variable $flags
 function generate_build_config_headers() {
@@ -250,11 +250,7 @@ function generate_build_config_headers() {
       outname="static-$1"
   fi
 
-  if [[ $1 == trusty ]] ; then
-    PERL=/usr/bin/perl run_verbose ./Configure $CONFIGURE_ARGS_TRUSTY
-  else
-    PERL=/usr/bin/perl run_verbose ./Configure $CONFIGURE_ARGS ${!configure_args_bits} ${!configure_args_stat}
-  fi
+  PERL=/usr/bin/perl run_verbose ./Configure $CONFIGURE_ARGS ${!configure_args_bits} ${!configure_args_stat}
 
   rm -f apps/CA.pl.bak crypto/opensslconf.h.bak
   mv -f crypto/opensslconf.h crypto/opensslconf-$outname.h
@@ -273,7 +269,7 @@ function generate_build_config_headers() {
 # Run Configure and generate makefiles
 function generate_build_config_mk() {
   chmod +x ./Configure
-  for bits in 32 64 trusty; do
+  for bits in 32 64; do
     # Header flags are output in $flags, first static, then dynamic
     generate_build_config_headers $bits 1
     local flags_static=$flags
@@ -299,14 +295,10 @@ function generate_opensslconf_h() {
   echo "Generating opensslconf.h"
   (
   echo "// Auto-generated - DO NOT EDIT!"
-  echo "#ifndef OPENSSL_SYS_TRUSTY"
   echo "#if defined(__LP64__)"
   echo "#include \"opensslconf-64.h\""
   echo "#else"
   echo "#include \"opensslconf-32.h\""
-  echo "#endif"
-  echo "#else"
-  echo "#include \"opensslconf-trusty.h\""
   echo "#endif"
   ) > crypto/opensslconf.h
   # Generate a compatible version for the static library builds
@@ -597,7 +589,6 @@ function import() {
   cd ..
 
   generate_config_mk Crypto-config-target.mk CRYPTO
-  generate_config_mk Crypto-config-trusty.mk CRYPTO_TRUSTY
 
   # Prune unnecessary sources
   prune
