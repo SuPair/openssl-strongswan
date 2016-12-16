@@ -9,33 +9,27 @@ Subject: [PATCH] x86cpuid.pl: hide symbols [backport from x86_64].
  crypto/x86cpuid.pl       | 3 +++
  3 files changed, 7 insertions(+)
 
-diff --git a/crypto/perlasm/x86asm.pl b/crypto/perlasm/x86asm.pl
-index eb543db..3f190ae 100644
---- a/crypto/perlasm/x86asm.pl
-+++ b/crypto/perlasm/x86asm.pl
-@@ -257,4 +257,6 @@ sub ::asm_init
+--- openssl-1.0.1l.orig/crypto/perlasm/x86asm.pl	2016-12-16 00:06:16.000000000 +0000
++++ openssl-1.0.1l/crypto/perlasm/x86asm.pl	2016-12-16 00:06:21.000000000 +0000
+@@ -257,4 +257,6 @@ EOF
      &file($filename);
  }
  
 +sub ::hidden {}
 +
  1;
-diff --git a/crypto/perlasm/x86gas.pl b/crypto/perlasm/x86gas.pl
-index 5972d06..e02ee84 100644
---- a/crypto/perlasm/x86gas.pl
-+++ b/crypto/perlasm/x86gas.pl
-@@ -251,4 +251,6 @@ sub ::initseg
+--- openssl-1.0.1l.orig/crypto/perlasm/x86gas.pl	2016-12-16 00:06:16.000000000 +0000
++++ openssl-1.0.1l/crypto/perlasm/x86gas.pl	2016-12-16 00:06:21.000000000 +0000
+@@ -250,4 +250,6 @@ ___
  sub ::dataseg
  {   push(@out,".data\n");   }
  
 +*::hidden = sub { push(@out,".hidden\t$nmdecor$_[0]\n"); } if ($::elf);
 +
  1;
-diff --git a/crypto/x86cpuid.pl b/crypto/x86cpuid.pl
-index 808049a..597b7a5 100644
---- a/crypto/x86cpuid.pl
-+++ b/crypto/x86cpuid.pl
-@@ -455,4 +455,7 @@
+--- openssl-1.0.1l.orig/crypto/x86cpuid.pl	2016-12-16 00:06:17.000000000 +0000
++++ openssl-1.0.1l/crypto/x86cpuid.pl	2016-12-16 00:06:21.000000000 +0000
+@@ -355,4 +355,7 @@ for (@ARGV) { $sse2=1 if (/-DOPENSSL_IA3
  
  &initseg("OPENSSL_cpuid_setup");
  
@@ -43,6 +37,3 @@ index 808049a..597b7a5 100644
 +&hidden("OPENSSL_ia32cap_P");
 +
  &asm_finish();
--- 
-1.9.3
-

@@ -19,11 +19,9 @@ be clearer and this change allows internal OpenSSL users to do the same.
  crypto/evp/p_lib.c   | 8 ++++++--
  4 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/crypto/bio/bio.h b/crypto/bio/bio.h
-index c947abb..d1b4aa0 100644
---- a/crypto/bio/bio.h
-+++ b/crypto/bio/bio.h
-@@ -642,6 +645,7 @@
+--- openssl-1.0.1l.orig/crypto/bio/bio.h	2016-12-16 00:06:37.000000000 +0000
++++ openssl-1.0.1l/crypto/bio/bio.h	2016-12-16 00:06:45.000000000 +0000
+@@ -645,6 +645,7 @@ BIO *	BIO_new(BIO_METHOD *type);
  int	BIO_set(BIO *a,BIO_METHOD *type);
  int	BIO_free(BIO *a);
  void	BIO_vfree(BIO *a);
@@ -31,13 +29,11 @@ index c947abb..d1b4aa0 100644
  int	BIO_read(BIO *b, void *data, int len);
  int	BIO_gets(BIO *bp,char *buf, int size);
  int	BIO_write(BIO *b, const void *data, int len);
-diff --git a/crypto/bio/bio_lib.c b/crypto/bio/bio_lib.c
-index 5267010..a021f38 100644
---- a/crypto/bio/bio_lib.c
-+++ b/crypto/bio/bio_lib.c
-@@ -140,6 +140,12 @@ void BIO_vfree(BIO *a)
-     BIO_free(a);
- }
+--- openssl-1.0.1l.orig/crypto/bio/bio_lib.c	2016-12-16 00:06:37.000000000 +0000
++++ openssl-1.0.1l/crypto/bio/bio_lib.c	2016-12-16 00:06:45.000000000 +0000
+@@ -141,6 +141,12 @@ int BIO_free(BIO *a)
+ void BIO_vfree(BIO *a)
+     { BIO_free(a); }
  
 +BIO *BIO_up_ref(BIO *bio)
 +{
@@ -46,15 +42,11 @@ index 5267010..a021f38 100644
 +}
 +
  void BIO_clear_flags(BIO *b, int flags)
- {
-     b->flags &= ~flags;
-diff --git a/crypto/evp/evp.h b/crypto/evp/evp.h
-index 48f865a..5f253da 100644
---- a/crypto/evp/evp.h
-+++ b/crypto/evp/evp.h
-@@ -921,8 +921,9 @@
- #endif
- 
+ 	{
+ 	b->flags &= ~flags;
+--- openssl-1.0.1l.orig/crypto/evp/evp.h	2016-12-16 00:06:39.000000000 +0000
++++ openssl-1.0.1l/crypto/evp/evp.h	2016-12-16 00:06:45.000000000 +0000
+@@ -923,6 +923,7 @@ struct ec_key_st *EVP_PKEY_get1_EC_KEY(E
  EVP_PKEY *	EVP_PKEY_new(void);
  EVP_PKEY *	EVP_PKEY_dup(EVP_PKEY *pkey);
  void		EVP_PKEY_free(EVP_PKEY *pkey);
@@ -62,13 +54,9 @@ index 48f865a..5f253da 100644
  
  EVP_PKEY *	d2i_PublicKey(int type,EVP_PKEY **a, const unsigned char **pp,
  			long length);
-diff --git a/crypto/evp/p_lib.c b/crypto/evp/p_lib.c
-index 8ab8f62..628697b 100644
---- a/crypto/evp/p_lib.c
-+++ b/crypto/evp/p_lib.c
-@@ -200,12 +200,11 @@
- 	return(ret);
- 	}
+--- openssl-1.0.1l.orig/crypto/evp/p_lib.c	2016-12-16 00:06:39.000000000 +0000
++++ openssl-1.0.1l/crypto/evp/p_lib.c	2016-12-16 00:06:45.000000000 +0000
+@@ -202,8 +202,7 @@ EVP_PKEY *EVP_PKEY_new(void)
  
  EVP_PKEY *EVP_PKEY_dup(EVP_PKEY *pkey)
  	{
@@ -78,9 +66,7 @@ index 8ab8f62..628697b 100644
  	}
  
  /* Setup a public key ASN1 method and ENGINE from a NID or a string.
-  * If pkey is NULL just return 1 or 0 if the algorithm exists.
-  */
-@@ -408,6 +413,12 @@
+@@ -414,6 +413,12 @@ void EVP_PKEY_free(EVP_PKEY *x)
  	OPENSSL_free(x);
  	}
  
@@ -93,4 +79,3 @@ index 8ab8f62..628697b 100644
  static void EVP_PKEY_free_it(EVP_PKEY *x)
  	{
  	if (x->ameth && x->ameth->pkey_free)
--- 

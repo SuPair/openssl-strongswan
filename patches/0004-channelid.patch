@@ -1,8 +1,6 @@
-diff --git a/crypto/bio/bio.h b/crypto/bio/bio.h
-index 05699ab..d05fa22 100644
---- a/crypto/bio/bio.h
-+++ b/crypto/bio/bio.h
-@@ -266,6 +266,9 @@ void BIO_clear_flags(BIO *b, int flags);
+--- openssl-1.0.1l.orig/crypto/bio/bio.h	2016-12-16 00:03:35.000000000 +0000
++++ openssl-1.0.1l/crypto/bio/bio.h	2016-12-16 00:03:43.000000000 +0000
+@@ -268,6 +268,9 @@ void BIO_clear_flags(BIO *b, int flags);
  #define BIO_RR_CONNECT			0x02
  /* Returned from the accept BIO when an accept would have blocked */
  #define BIO_RR_ACCEPT			0x03
@@ -12,11 +10,9 @@ index 05699ab..d05fa22 100644
  
  /* These are passed by the BIO callback */
  #define BIO_CB_FREE	0x01
-diff --git a/crypto/evp/evp.h b/crypto/evp/evp.h
-index ea4bed9..5f18d4b 100644
---- a/crypto/evp/evp.h
-+++ b/crypto/evp/evp.h
-@@ -921,6 +921,7 @@ struct ec_key_st *EVP_PKEY_get1_EC_KEY(EVP_PKEY *pkey);
+--- openssl-1.0.1l.orig/crypto/evp/evp.h	2016-12-16 00:03:36.000000000 +0000
++++ openssl-1.0.1l/crypto/evp/evp.h	2016-12-16 00:03:43.000000000 +0000
+@@ -921,6 +921,7 @@ struct ec_key_st *EVP_PKEY_get1_EC_KEY(E
  #endif
  
  EVP_PKEY *	EVP_PKEY_new(void);
@@ -24,10 +20,8 @@ index ea4bed9..5f18d4b 100644
  void		EVP_PKEY_free(EVP_PKEY *pkey);
  
  EVP_PKEY *	d2i_PublicKey(int type,EVP_PKEY **a, const unsigned char **pp,
-diff --git a/crypto/evp/p_lib.c b/crypto/evp/p_lib.c
-index a0e14a3..65a4440 100644
---- a/crypto/evp/p_lib.c
-+++ b/crypto/evp/p_lib.c
+--- openssl-1.0.1l.orig/crypto/evp/p_lib.c	2016-12-16 00:03:37.000000000 +0000
++++ openssl-1.0.1l/crypto/evp/p_lib.c	2016-12-16 00:03:43.000000000 +0000
 @@ -200,6 +200,12 @@ EVP_PKEY *EVP_PKEY_new(void)
  	return(ret);
  	}
@@ -41,11 +35,9 @@ index a0e14a3..65a4440 100644
  /* Setup a public key ASN1 method and ENGINE from a NID or a string.
   * If pkey is NULL just return 1 or 0 if the algorithm exists.
   */
-diff --git a/ssl/bio_ssl.c b/ssl/bio_ssl.c
-index e9552ca..06a13de 100644
---- a/ssl/bio_ssl.c
-+++ b/ssl/bio_ssl.c
-@@ -206,6 +206,10 @@ static int ssl_read(BIO *b, char *out, int outl)
+--- openssl-1.0.1l.orig/ssl/bio_ssl.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/bio_ssl.c	2016-12-16 00:03:43.000000000 +0000
+@@ -206,6 +206,10 @@ static int ssl_read(BIO *b, char *out, i
  		BIO_set_retry_special(b);
  		retry_reason=BIO_RR_SSL_X509_LOOKUP;
  		break;
@@ -56,7 +48,7 @@ index e9552ca..06a13de 100644
  	case SSL_ERROR_WANT_ACCEPT:
  		BIO_set_retry_special(b);
  		retry_reason=BIO_RR_ACCEPT;
-@@ -280,6 +284,10 @@ static int ssl_write(BIO *b, const char *out, int outl)
+@@ -280,6 +284,10 @@ static int ssl_write(BIO *b, const char
  		BIO_set_retry_special(b);
  		retry_reason=BIO_RR_SSL_X509_LOOKUP;
  		break;
@@ -67,11 +59,9 @@ index e9552ca..06a13de 100644
  	case SSL_ERROR_WANT_CONNECT:
  		BIO_set_retry_special(b);
  		retry_reason=BIO_RR_CONNECT;
-diff --git a/ssl/s3_both.c b/ssl/s3_both.c
-index 53b9390..c0dac70 100644
---- a/ssl/s3_both.c
-+++ b/ssl/s3_both.c
-@@ -554,7 +554,8 @@ long ssl3_get_message(SSL *s, int st1, int stn, int mt, long max, int *ok)
+--- openssl-1.0.1l.orig/ssl/s3_both.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/s3_both.c	2016-12-16 00:03:43.000000000 +0000
+@@ -562,7 +562,8 @@ long ssl3_get_message(SSL *s, int st1, i
  #endif
  
  	/* Feed this message into MAC computation. */
@@ -81,11 +71,9 @@ index 53b9390..c0dac70 100644
  	if (s->msg_callback)
  		s->msg_callback(0, s->version, SSL3_RT_HANDSHAKE, s->init_buf->data, (size_t)s->init_num + 4, s, s->msg_callback_arg);
  	*ok=1;
-diff --git a/ssl/s3_clnt.c b/ssl/s3_clnt.c
-index 3d3fd64..7e0c4d5 100644
---- a/ssl/s3_clnt.c
-+++ b/ssl/s3_clnt.c
-@@ -465,13 +465,14 @@ int ssl3_connect(SSL *s)
+--- openssl-1.0.1l.orig/ssl/s3_clnt.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/s3_clnt.c	2016-12-16 00:03:43.000000000 +0000
+@@ -452,13 +452,14 @@ int ssl3_connect(SSL *s)
  				SSL3_ST_CW_CHANGE_A,SSL3_ST_CW_CHANGE_B);
  			if (ret <= 0) goto end;
  
@@ -104,7 +92,7 @@ index 3d3fd64..7e0c4d5 100644
  #endif
  			s->init_num=0;
  
-@@ -505,6 +506,18 @@ int ssl3_connect(SSL *s)
+@@ -492,6 +493,18 @@ int ssl3_connect(SSL *s)
  		case SSL3_ST_CW_NEXT_PROTO_B:
  			ret=ssl3_send_next_proto(s);
  			if (ret <= 0) goto end;
@@ -123,7 +111,7 @@ index 3d3fd64..7e0c4d5 100644
  			s->state=SSL3_ST_CW_FINISHED_A;
  			break;
  #endif
-@@ -532,6 +545,18 @@ int ssl3_connect(SSL *s)
+@@ -519,6 +532,18 @@ int ssl3_connect(SSL *s)
  				}
  			else
  				{
@@ -142,7 +130,7 @@ index 3d3fd64..7e0c4d5 100644
  				if ((SSL_get_mode(s) & SSL_MODE_HANDSHAKE_CUTTHROUGH)
  				    && ssl3_can_cutthrough(s)
  				    && s->s3->previous_server_finished_len == 0 /* no cutthrough on renegotiation (would complicate the state machine) */
-@@ -3338,7 +3363,8 @@ err:
+@@ -3505,7 +3530,8 @@ err:
  	return(0);
  	}
  
@@ -152,7 +140,7 @@ index 3d3fd64..7e0c4d5 100644
  int ssl3_send_next_proto(SSL *s)
  	{
  	unsigned int len, padding_len;
-@@ -3362,7 +3388,135 @@ int ssl3_send_next_proto(SSL *s)
+@@ -3529,7 +3555,135 @@ int ssl3_send_next_proto(SSL *s)
  
  	return ssl3_do_write(s, SSL3_RT_HANDSHAKE);
          }
@@ -289,10 +277,8 @@ index 3d3fd64..7e0c4d5 100644
  
  int ssl_do_client_cert_cb(SSL *s, X509 **px509, EVP_PKEY **ppkey)
  	{
-diff --git a/ssl/s3_lib.c b/ssl/s3_lib.c
-index 1865c70..f801923 100644
---- a/ssl/s3_lib.c
-+++ b/ssl/s3_lib.c
+--- openssl-1.0.1l.orig/ssl/s3_lib.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/s3_lib.c	2016-12-16 00:03:43.000000000 +0000
 @@ -2951,6 +2951,11 @@ int ssl3_new(SSL *s)
  #ifndef OPENSSL_NO_SRP
  	SSL_SRP_CTX_init(s);
@@ -316,7 +302,7 @@ index 1865c70..f801923 100644
  	}
  
  #ifndef OPENSSL_NO_SRP
-@@ -3353,6 +3362,33 @@ long ssl3_ctrl(SSL *s, int cmd, long larg, void *parg)
+@@ -3353,6 +3362,33 @@ long ssl3_ctrl(SSL *s, int cmd, long lar
  		ret = 1;
  		break;
  #endif
@@ -349,8 +335,8 @@ index 1865c70..f801923 100644
 +		return 64;
  
  #endif /* !OPENSSL_NO_TLSEXT */
- 	default:
-@@ -3574,6 +3610,12 @@ long ssl3_ctx_ctrl(SSL_CTX *ctx, int cmd, long larg, void *parg)
+ 
+@@ -3601,6 +3637,12 @@ long ssl3_ctx_ctrl(SSL_CTX *ctx, int cmd
  			}
  		return 1;
  		}
@@ -363,7 +349,7 @@ index 1865c70..f801923 100644
  
  #ifdef TLSEXT_TYPE_opaque_prf_input
  	case SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT_CB_ARG:
-@@ -3642,6 +3684,18 @@ long ssl3_ctx_ctrl(SSL_CTX *ctx, int cmd, long larg, void *parg)
+@@ -3669,6 +3711,18 @@ long ssl3_ctx_ctrl(SSL_CTX *ctx, int cmd
  			}
  		break;
  
@@ -382,11 +368,9 @@ index 1865c70..f801923 100644
  	default:
  		return(0);
  		}
-diff --git a/ssl/s3_srvr.c b/ssl/s3_srvr.c
-index 323b260..6824ef6 100644
---- a/ssl/s3_srvr.c
-+++ b/ssl/s3_srvr.c
-@@ -157,8 +157,11 @@
+--- openssl-1.0.1l.orig/ssl/s3_srvr.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/s3_srvr.c	2016-12-16 00:03:43.000000000 +0000
+@@ -158,8 +158,11 @@
  #include <openssl/buffer.h>
  #include <openssl/rand.h>
  #include <openssl/objects.h>
@@ -398,7 +382,7 @@ index 323b260..6824ef6 100644
  #include <openssl/x509.h>
  #ifndef OPENSSL_NO_DH
  #include <openssl/dh.h>
-@@ -615,15 +618,8 @@ int ssl3_accept(SSL *s)
+@@ -608,15 +611,8 @@ int ssl3_accept(SSL *s)
  				 * the client uses its key from the certificate
  				 * for key exchange.
  				 */
@@ -450,7 +434,7 @@ index 323b260..6824ef6 100644
  
  #if !defined(OPENSSL_NO_TLSEXT) && !defined(OPENSSL_NO_NEXTPROTONEG)
  		case SSL3_ST_SR_NEXT_PROTO_A:
-@@ -700,6 +708,19 @@ int ssl3_accept(SSL *s)
+@@ -713,6 +721,19 @@ int ssl3_accept(SSL *s)
  			ret=ssl3_get_next_proto(s);
  			if (ret <= 0) goto end;
  			s->init_num = 0;
@@ -470,7 +454,7 @@ index 323b260..6824ef6 100644
  			s->state=SSL3_ST_SR_FINISHED_A;
  			break;
  #endif
-@@ -717,6 +738,15 @@ int ssl3_accept(SSL *s)
+@@ -742,6 +763,15 @@ int ssl3_accept(SSL *s)
  #endif
  			else
  				s->state=SSL3_ST_SW_CHANGE_A;
@@ -486,7 +470,7 @@ index 323b260..6824ef6 100644
  			s->init_num=0;
  			break;
  
-@@ -771,18 +801,7 @@ int ssl3_accept(SSL *s)
+@@ -796,18 +826,7 @@ int ssl3_accept(SSL *s)
  			if (ret <= 0) goto end;
  			s->state=SSL3_ST_SW_FLUSH;
  			if (s->hit)
@@ -506,7 +490,7 @@ index 323b260..6824ef6 100644
  			else
  				s->s3->tmp.next_state=SSL_ST_OK;
  			s->init_num=0;
-@@ -1466,6 +1487,22 @@ int ssl3_send_server_hello(SSL *s)
+@@ -1491,6 +1510,22 @@ int ssl3_send_server_hello(SSL *s)
  
  	if (s->state == SSL3_ST_SW_SRVR_HELLO_A)
  		{
@@ -529,7 +513,7 @@ index 323b260..6824ef6 100644
  		buf=(unsigned char *)s->init_buf->data;
  #ifdef OPENSSL_NO_TLSEXT
  		p=s->s3->server_random;
-@@ -3632,4 +3669,145 @@ int ssl3_get_next_proto(SSL *s)
+@@ -3684,4 +3719,145 @@ int ssl3_get_next_proto(SSL *s)
  	return 1;
  	}
  # endif
@@ -675,11 +659,9 @@ index 323b260..6824ef6 100644
 +	return ret;
 +	}
  #endif
-diff --git a/ssl/ssl.h b/ssl/ssl.h
-index 944aea6..e50b8f0 100644
---- a/ssl/ssl.h
-+++ b/ssl/ssl.h
-@@ -547,6 +547,13 @@ struct ssl_session_st
+--- openssl-1.0.1l.orig/ssl/ssl.h	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/ssl.h	2016-12-16 00:03:43.000000000 +0000
+@@ -545,6 +545,13 @@ struct ssl_session_st
  #ifndef OPENSSL_NO_SRP
  	char *srp_username;
  #endif
@@ -693,7 +675,7 @@ index 944aea6..e50b8f0 100644
  	};
  
  #endif
-@@ -862,6 +869,9 @@ struct ssl_ctx_st
+@@ -874,6 +881,9 @@ struct ssl_ctx_st
  	/* get client cert callback */
  	int (*client_cert_cb)(SSL *ssl, X509 **x509, EVP_PKEY **pkey);
  
@@ -703,7 +685,7 @@ index 944aea6..e50b8f0 100644
      /* cookie generate callback */
      int (*app_gen_cookie_cb)(SSL *ssl, unsigned char *cookie, 
          unsigned int *cookie_len);
-@@ -999,6 +1009,16 @@ struct ssl_ctx_st
+@@ -1007,6 +1017,16 @@ struct ssl_ctx_st
  # endif
          /* SRTP profiles we are willing to do from RFC 5764 */
          STACK_OF(SRTP_PROTECTION_PROFILE) *srtp_profiles;  
@@ -720,7 +702,7 @@ index 944aea6..e50b8f0 100644
  #endif
  	};
  
-@@ -1040,6 +1060,10 @@ LHASH_OF(SSL_SESSION) *SSL_CTX_sessions(SSL_CTX *ctx);
+@@ -1048,6 +1068,10 @@ LHASH_OF(SSL_SESSION) *SSL_CTX_sessions(
  	SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_TIMEOUTS,0,NULL)
  #define SSL_CTX_sess_cache_full(ctx) \
  	SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CACHE_FULL,0,NULL)
@@ -731,7 +713,7 @@ index 944aea6..e50b8f0 100644
  
  void SSL_CTX_sess_set_new_cb(SSL_CTX *ctx, int (*new_session_cb)(struct ssl_st *ssl,SSL_SESSION *sess));
  int (*SSL_CTX_sess_get_new_cb(SSL_CTX *ctx))(struct ssl_st *ssl, SSL_SESSION *sess);
-@@ -1056,6 +1080,8 @@ void SSL_CTX_set_info_callback(SSL_CTX *ctx, void (*cb)(const SSL *ssl,int type,
+@@ -1059,6 +1083,8 @@ void SSL_CTX_set_info_callback(SSL_CTX *
  void (*SSL_CTX_get_info_callback(SSL_CTX *ctx))(const SSL *ssl,int type,int val);
  void SSL_CTX_set_client_cert_cb(SSL_CTX *ctx, int (*client_cert_cb)(SSL *ssl, X509 **x509, EVP_PKEY **pkey));
  int (*SSL_CTX_get_client_cert_cb(SSL_CTX *ctx))(SSL *ssl, X509 **x509, EVP_PKEY **pkey);
@@ -740,21 +722,22 @@ index 944aea6..e50b8f0 100644
  #ifndef OPENSSL_NO_ENGINE
  int SSL_CTX_set_client_cert_engine(SSL_CTX *ctx, ENGINE *e);
  #endif
-@@ -1117,5 +1143,6 @@ const char *SSL_get_psk_identity(const SSL *s);
+@@ -1120,12 +1146,14 @@ const char *SSL_get_psk_identity(const S
  #define SSL_WRITING	2
  #define SSL_READING	3
  #define SSL_X509_LOOKUP	4
 +#define SSL_CHANNEL_ID_LOOKUP	5
  
  /* These will only be used when doing non-blocking IO */
-@@ -1124,5 +1151,6 @@ const char *SSL_get_psk_identity(const SSL *s);
+ #define SSL_want_nothing(s)	(SSL_want(s) == SSL_NOTHING)
  #define SSL_want_read(s)	(SSL_want(s) == SSL_READING)
  #define SSL_want_write(s)	(SSL_want(s) == SSL_WRITING)
  #define SSL_want_x509_lookup(s)	(SSL_want(s) == SSL_X509_LOOKUP)
 +#define SSL_want_channel_id_lookup(s)	(SSL_want(s) == SSL_CHANNEL_ID_LOOKUP)
  
  #define SSL_MAC_FLAG_READ_MAC_STREAM 1
-@@ -1373,6 +1401,13 @@ struct ssl_st
+ #define SSL_MAC_FLAG_WRITE_MAC_STREAM 2
+@@ -1374,6 +1402,13 @@ struct ssl_st
  	                                 */
  	unsigned int tlsext_hb_pending; /* Indicates if a HeartbeatRequest is in flight */
  	unsigned int tlsext_hb_seq;     /* HeartbeatRequest sequence number */
@@ -768,14 +751,15 @@ index 944aea6..e50b8f0 100644
  #else
  #define session_ctx ctx
  #endif /* OPENSSL_NO_TLSEXT */
-@@ -1543,5 +1578,6 @@ DECLARE_PEM_rw(SSL_SESSION, SSL_SESSION)
+@@ -1545,6 +1580,7 @@ DECLARE_PEM_rw(SSL_SESSION, SSL_SESSION)
  #define SSL_ERROR_ZERO_RETURN		6
  #define SSL_ERROR_WANT_CONNECT		7
  #define SSL_ERROR_WANT_ACCEPT		8
 +#define SSL_ERROR_WANT_CHANNEL_ID_LOOKUP	9
  
  #define SSL_CTRL_NEED_TMP_RSA			1
-@@ -1631,6 +1667,9 @@ DECLARE_PEM_rw(SSL_SESSION, SSL_SESSION)
+ #define SSL_CTRL_SET_TMP_RSA			2
+@@ -1632,6 +1668,9 @@ DECLARE_PEM_rw(SSL_SESSION, SSL_SESSION)
  #define SSL_CTRL_GET_TLS_EXT_HEARTBEAT_PENDING		86
  #define SSL_CTRL_SET_TLS_EXT_HEARTBEAT_NO_REQUESTS	87
  #endif
@@ -785,7 +769,7 @@ index 944aea6..e50b8f0 100644
  #endif
  
  #define DTLS_CTRL_GET_TIMEOUT		73
-@@ -1678,6 +1717,26 @@ DECLARE_PEM_rw(SSL_SESSION, SSL_SESSION)
+@@ -1683,6 +1722,26 @@ DECLARE_PEM_rw(SSL_SESSION, SSL_SESSION)
  #define SSL_set_tmp_ecdh(ssl,ecdh) \
  	SSL_ctrl(ssl,SSL_CTRL_SET_TMP_ECDH,0,(char *)ecdh)
  
@@ -812,7 +796,7 @@ index 944aea6..e50b8f0 100644
  #define SSL_CTX_add_extra_chain_cert(ctx,x509) \
  	SSL_CTX_ctrl(ctx,SSL_CTRL_EXTRA_CHAIN_CERT,0,(char *)x509)
  #define SSL_CTX_get_extra_chain_certs(ctx,px509) \
-@@ -2176,6 +2235,7 @@ void ERR_load_SSL_strings(void);
+@@ -2187,6 +2246,7 @@ void ERR_load_SSL_strings(void);
  #define SSL_F_SSL3_GET_CERTIFICATE_REQUEST		 135
  #define SSL_F_SSL3_GET_CERT_STATUS			 289
  #define SSL_F_SSL3_GET_CERT_VERIFY			 136
@@ -820,7 +804,7 @@ index 944aea6..e50b8f0 100644
  #define SSL_F_SSL3_GET_CLIENT_CERTIFICATE		 137
  #define SSL_F_SSL3_GET_CLIENT_HELLO			 138
  #define SSL_F_SSL3_GET_CLIENT_KEY_EXCHANGE		 139
-@@ -2195,6 +2255,7 @@ void ERR_load_SSL_strings(void);
+@@ -2206,6 +2266,7 @@ void ERR_load_SSL_strings(void);
  #define SSL_F_SSL3_READ_BYTES				 148
  #define SSL_F_SSL3_READ_N				 149
  #define SSL_F_SSL3_SEND_CERTIFICATE_REQUEST		 150
@@ -828,7 +812,7 @@ index 944aea6..e50b8f0 100644
  #define SSL_F_SSL3_SEND_CLIENT_CERTIFICATE		 151
  #define SSL_F_SSL3_SEND_CLIENT_KEY_EXCHANGE		 152
  #define SSL_F_SSL3_SEND_CLIENT_VERIFY			 153
-@@ -2361,12 +2422,15 @@ void ERR_load_SSL_strings(void);
+@@ -2374,12 +2435,15 @@ void ERR_load_SSL_strings(void);
  #define SSL_R_BIO_NOT_SET				 128
  #define SSL_R_BLOCK_CIPHER_PAD_IS_WRONG			 129
  #define SSL_R_BN_LIB					 130
@@ -844,7 +828,7 @@ index 944aea6..e50b8f0 100644
  #define SSL_R_CIPHER_CODE_WRONG_LENGTH			 137
  #define SSL_R_CIPHER_OR_HASH_UNAVAILABLE		 138
  #define SSL_R_CIPHER_TABLE_SRC_ERROR			 139
-@@ -2379,6 +2443,7 @@ void ERR_load_SSL_strings(void);
+@@ -2392,6 +2456,7 @@ void ERR_load_SSL_strings(void);
  #define SSL_R_CONNECTION_ID_IS_DIFFERENT		 143
  #define SSL_R_CONNECTION_TYPE_NOT_SET			 144
  #define SSL_R_COOKIE_MISMATCH				 308
@@ -852,7 +836,7 @@ index 944aea6..e50b8f0 100644
  #define SSL_R_DATA_BETWEEN_CCS_AND_FINISHED		 145
  #define SSL_R_DATA_LENGTH_TOO_LONG			 146
  #define SSL_R_DECRYPTION_FAILED				 147
-@@ -2396,9 +2461,12 @@ void ERR_load_SSL_strings(void);
+@@ -2409,9 +2474,12 @@ void ERR_load_SSL_strings(void);
  #define SSL_R_ENCRYPTED_LENGTH_TOO_LONG			 150
  #define SSL_R_ERROR_GENERATING_TMP_RSA_KEY		 282
  #define SSL_R_ERROR_IN_RECEIVED_CIPHER_LIST		 151
@@ -865,7 +849,7 @@ index 944aea6..e50b8f0 100644
  #define SSL_R_GOT_NEXT_PROTO_BEFORE_A_CCS		 355
  #define SSL_R_GOT_NEXT_PROTO_WITHOUT_EXTENSION		 356
  #define SSL_R_HTTPS_PROXY_REQUEST			 155
-@@ -2408,6 +2476,7 @@ void ERR_load_SSL_strings(void);
+@@ -2422,6 +2490,7 @@ void ERR_load_SSL_strings(void);
  #define SSL_R_INVALID_CHALLENGE_LENGTH			 158
  #define SSL_R_INVALID_COMMAND				 280
  #define SSL_R_INVALID_COMPRESSION_ALGORITHM		 341
@@ -873,7 +857,7 @@ index 944aea6..e50b8f0 100644
  #define SSL_R_INVALID_PURPOSE				 278
  #define SSL_R_INVALID_SRP_USERNAME			 357
  #define SSL_R_INVALID_STATUS_RESPONSE			 328
-@@ -2462,6 +2531,7 @@ void ERR_load_SSL_strings(void);
+@@ -2476,6 +2545,7 @@ void ERR_load_SSL_strings(void);
  #define SSL_R_NO_COMPRESSION_SPECIFIED			 187
  #define SSL_R_NO_GOST_CERTIFICATE_SENT_BY_PEER		 330
  #define SSL_R_NO_METHOD_SPECIFIED			 188
@@ -881,11 +865,9 @@ index 944aea6..e50b8f0 100644
  #define SSL_R_NO_PRIVATEKEY				 189
  #define SSL_R_NO_PRIVATE_KEY_ASSIGNED			 190
  #define SSL_R_NO_PROTOCOLS_AVAILABLE			 191
-diff --git a/ssl/ssl3.h b/ssl/ssl3.h
-index cf81de0..8502628 100644
---- a/ssl/ssl3.h
-+++ b/ssl/ssl3.h
-@@ -548,6 +548,22 @@ typedef struct ssl3_state_st
+--- openssl-1.0.1l.orig/ssl/ssl3.h	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/ssl3.h	2016-12-16 00:03:43.000000000 +0000
+@@ -561,6 +561,22 @@ typedef struct ssl3_state_st
  	char is_probably_safari;
  #endif /* !OPENSSL_NO_EC */
  #endif /* !OPENSSL_NO_TLSEXT */
@@ -908,7 +890,7 @@ index cf81de0..8502628 100644
  	} SSL3_STATE;
  
  #endif
-@@ -592,6 +608,8 @@ typedef struct ssl3_state_st
+@@ -605,6 +621,8 @@ typedef struct ssl3_state_st
  #define SSL3_ST_CW_NEXT_PROTO_A		(0x200|SSL_ST_CONNECT)
  #define SSL3_ST_CW_NEXT_PROTO_B		(0x201|SSL_ST_CONNECT)
  #endif
@@ -917,7 +899,7 @@ index cf81de0..8502628 100644
  #define SSL3_ST_CW_FINISHED_A		(0x1B0|SSL_ST_CONNECT)
  #define SSL3_ST_CW_FINISHED_B		(0x1B1|SSL_ST_CONNECT)
  /* read from server */
-@@ -646,6 +664,9 @@ typedef struct ssl3_state_st
+@@ -658,6 +676,9 @@ typedef struct ssl3_state_st
  #define SSL3_ST_SR_NEXT_PROTO_A		(0x210|SSL_ST_ACCEPT)
  #define SSL3_ST_SR_NEXT_PROTO_B		(0x211|SSL_ST_ACCEPT)
  #endif
@@ -927,7 +909,7 @@ index cf81de0..8502628 100644
  #define SSL3_ST_SR_FINISHED_A		(0x1C0|SSL_ST_ACCEPT)
  #define SSL3_ST_SR_FINISHED_B		(0x1C1|SSL_ST_ACCEPT)
  /* write to client */
-@@ -673,6 +694,7 @@ typedef struct ssl3_state_st
+@@ -685,6 +706,7 @@ typedef struct ssl3_state_st
  #ifndef OPENSSL_NO_NEXTPROTONEG
  #define SSL3_MT_NEXT_PROTO			67
  #endif
@@ -935,11 +917,10 @@ index cf81de0..8502628 100644
  #define DTLS1_MT_HELLO_VERIFY_REQUEST    3
  
  
-diff --git a/ssl/ssl_asn1.c b/ssl/ssl_asn1.c
-index 8bda011..e579e7c 100644
---- a/ssl/ssl_asn1.c
-+++ b/ssl/ssl_asn1.c
-@@ -118,11 +118,12 @@ typedef struct ssl_session_asn1_st
+--- openssl-1.0.1l.orig/ssl/ssl_asn1.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/ssl_asn1.c	2016-12-16 00:03:43.000000000 +0000
+@@ -117,12 +117,13 @@ typedef struct ssl_session_asn1_st
+ #ifndef OPENSSL_NO_SRP
  	ASN1_OCTET_STRING srp_username;
  #endif /* OPENSSL_NO_SRP */
 +	ASN1_OCTET_STRING original_handshake_hash;
@@ -953,7 +934,9 @@ index 8bda011..e579e7c 100644
  	unsigned char buf[4],ibuf1[LSIZE2],ibuf2[LSIZE2];
  	unsigned char ibuf3[LSIZE2],ibuf4[LSIZE2],ibuf5[LSIZE2];
  #ifndef OPENSSL_NO_TLSEXT
-@@ -280,4 +281,11 @@ int i2d_SSL_SESSION(SSL_SESSION *in, unsigned char **pp)
+@@ -272,6 +273,13 @@ int i2d_SSL_SESSION(SSL_SESSION *in, uns
+ 		a.psk_identity.type=V_ASN1_OCTET_STRING;
+ 		a.psk_identity.data=(unsigned char *)(in->psk_identity);
  		}
 +
 +	if (in->original_handshake_hash_len > 0)
@@ -965,23 +948,27 @@ index 8bda011..e579e7c 100644
  #endif /* OPENSSL_NO_PSK */
  #ifndef OPENSSL_NO_SRP
  	if (in->srp_username)
-@@ -335,4 +343,6 @@ int i2d_SSL_SESSION(SSL_SESSION *in, unsigned char **pp)
+@@ -325,6 +333,8 @@ int i2d_SSL_SESSION(SSL_SESSION *in, uns
+ 	if (in->srp_username)
+         	M_ASN1_I2D_len_EXP_opt(&(a.srp_username), i2d_ASN1_OCTET_STRING,12,v12);
  #endif /* OPENSSL_NO_SRP */
 +	if (in->original_handshake_hash_len > 0)
 +		M_ASN1_I2D_len_EXP_opt(&(a.original_handshake_hash),i2d_ASN1_OCTET_STRING,14,v14);
  
  	M_ASN1_I2D_seq_total();
  
-@@ -385,4 +395,6 @@ int i2d_SSL_SESSION(SSL_SESSION *in, unsigned char **pp)
+@@ -373,6 +383,8 @@ int i2d_SSL_SESSION(SSL_SESSION *in, uns
+ 	if (in->srp_username)
+ 		M_ASN1_I2D_put_EXP_opt(&(a.srp_username), i2d_ASN1_OCTET_STRING,12,v12);
  #endif /* OPENSSL_NO_SRP */
 +	if (in->original_handshake_hash_len > 0)
 +		M_ASN1_I2D_put_EXP_opt(&(a.original_handshake_hash),i2d_ASN1_OCTET_STRING,14,v14);
  	M_ASN1_I2D_finish();
  	}
  
-@@ -661,5 +673,16 @@ SSL_SESSION *d2i_SSL_SESSION(SSL_SESSION **a, const unsigned char **pp,
- 		os.data = NULL;
- 		}
+@@ -642,5 +654,16 @@ SSL_SESSION *d2i_SSL_SESSION(SSL_SESSION
+ 		ret->srp_username=NULL;
+ #endif /* OPENSSL_NO_SRP */
  
 +	os.length=0;
 +	os.data=NULL;
@@ -996,10 +983,8 @@ index 8bda011..e579e7c 100644
 +
  	M_ASN1_D2I_Finish(a,SSL_SESSION_free,SSL_F_D2I_SSL_SESSION);
  	}
-diff --git a/ssl/ssl_err.c b/ssl/ssl_err.c
-index 370fb57..b3eee4d 100644
---- a/ssl/ssl_err.c
-+++ b/ssl/ssl_err.c
+--- openssl-1.0.1l.orig/ssl/ssl_err.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/ssl_err.c	2016-12-16 00:03:43.000000000 +0000
 @@ -151,6 +151,7 @@ static ERR_STRING_DATA SSL_str_functs[]=
  {ERR_FUNC(SSL_F_SSL3_GET_CERTIFICATE_REQUEST),	"SSL3_GET_CERTIFICATE_REQUEST"},
  {ERR_FUNC(SSL_F_SSL3_GET_CERT_STATUS),	"SSL3_GET_CERT_STATUS"},
@@ -1016,7 +1001,7 @@ index 370fb57..b3eee4d 100644
  {ERR_FUNC(SSL_F_SSL3_SEND_CLIENT_CERTIFICATE),	"SSL3_SEND_CLIENT_CERTIFICATE"},
  {ERR_FUNC(SSL_F_SSL3_SEND_CLIENT_KEY_EXCHANGE),	"SSL3_SEND_CLIENT_KEY_EXCHANGE"},
  {ERR_FUNC(SSL_F_SSL3_SEND_CLIENT_VERIFY),	"SSL3_SEND_CLIENT_VERIFY"},
-@@ -339,12 +341,15 @@ static ERR_STRING_DATA SSL_str_reasons[]=
+@@ -340,12 +342,15 @@ static ERR_STRING_DATA SSL_str_reasons[]
  {ERR_REASON(SSL_R_BIO_NOT_SET)           ,"bio not set"},
  {ERR_REASON(SSL_R_BLOCK_CIPHER_PAD_IS_WRONG),"block cipher pad is wrong"},
  {ERR_REASON(SSL_R_BN_LIB)                ,"bn lib"},
@@ -1032,7 +1017,7 @@ index 370fb57..b3eee4d 100644
  {ERR_REASON(SSL_R_CIPHER_CODE_WRONG_LENGTH),"cipher code wrong length"},
  {ERR_REASON(SSL_R_CIPHER_OR_HASH_UNAVAILABLE),"cipher or hash unavailable"},
  {ERR_REASON(SSL_R_CIPHER_TABLE_SRC_ERROR),"cipher table src error"},
-@@ -357,6 +362,7 @@ static ERR_STRING_DATA SSL_str_reasons[]=
+@@ -358,6 +363,7 @@ static ERR_STRING_DATA SSL_str_reasons[]
  {ERR_REASON(SSL_R_CONNECTION_ID_IS_DIFFERENT),"connection id is different"},
  {ERR_REASON(SSL_R_CONNECTION_TYPE_NOT_SET),"connection type not set"},
  {ERR_REASON(SSL_R_COOKIE_MISMATCH)       ,"cookie mismatch"},
@@ -1040,7 +1025,7 @@ index 370fb57..b3eee4d 100644
  {ERR_REASON(SSL_R_DATA_BETWEEN_CCS_AND_FINISHED),"data between ccs and finished"},
  {ERR_REASON(SSL_R_DATA_LENGTH_TOO_LONG)  ,"data length too long"},
  {ERR_REASON(SSL_R_DECRYPTION_FAILED)     ,"decryption failed"},
-@@ -374,9 +380,12 @@ static ERR_STRING_DATA SSL_str_reasons[]=
+@@ -375,9 +381,12 @@ static ERR_STRING_DATA SSL_str_reasons[]
  {ERR_REASON(SSL_R_ENCRYPTED_LENGTH_TOO_LONG),"encrypted length too long"},
  {ERR_REASON(SSL_R_ERROR_GENERATING_TMP_RSA_KEY),"error generating tmp rsa key"},
  {ERR_REASON(SSL_R_ERROR_IN_RECEIVED_CIPHER_LIST),"error in received cipher list"},
@@ -1053,7 +1038,7 @@ index 370fb57..b3eee4d 100644
  {ERR_REASON(SSL_R_GOT_NEXT_PROTO_BEFORE_A_CCS),"got next proto before a ccs"},
  {ERR_REASON(SSL_R_GOT_NEXT_PROTO_WITHOUT_EXTENSION),"got next proto without seeing extension"},
  {ERR_REASON(SSL_R_HTTPS_PROXY_REQUEST)   ,"https proxy request"},
-@@ -386,6 +395,7 @@ static ERR_STRING_DATA SSL_str_reasons[]=
+@@ -388,6 +397,7 @@ static ERR_STRING_DATA SSL_str_reasons[]
  {ERR_REASON(SSL_R_INVALID_CHALLENGE_LENGTH),"invalid challenge length"},
  {ERR_REASON(SSL_R_INVALID_COMMAND)       ,"invalid command"},
  {ERR_REASON(SSL_R_INVALID_COMPRESSION_ALGORITHM),"invalid compression algorithm"},
@@ -1061,7 +1046,7 @@ index 370fb57..b3eee4d 100644
  {ERR_REASON(SSL_R_INVALID_PURPOSE)       ,"invalid purpose"},
  {ERR_REASON(SSL_R_INVALID_SRP_USERNAME)  ,"invalid srp username"},
  {ERR_REASON(SSL_R_INVALID_STATUS_RESPONSE),"invalid status response"},
-@@ -440,6 +450,7 @@ static ERR_STRING_DATA SSL_str_reasons[]=
+@@ -442,6 +452,7 @@ static ERR_STRING_DATA SSL_str_reasons[]
  {ERR_REASON(SSL_R_NO_COMPRESSION_SPECIFIED),"no compression specified"},
  {ERR_REASON(SSL_R_NO_GOST_CERTIFICATE_SENT_BY_PEER),"Peer haven't sent GOST certificate, required for selected ciphersuite"},
  {ERR_REASON(SSL_R_NO_METHOD_SPECIFIED)   ,"no method specified"},
@@ -1069,11 +1054,9 @@ index 370fb57..b3eee4d 100644
  {ERR_REASON(SSL_R_NO_PRIVATEKEY)         ,"no privatekey"},
  {ERR_REASON(SSL_R_NO_PRIVATE_KEY_ASSIGNED),"no private key assigned"},
  {ERR_REASON(SSL_R_NO_PROTOCOLS_AVAILABLE),"no protocols available"},
-diff --git a/ssl/ssl_lib.c b/ssl/ssl_lib.c
-index 123f925..6938267 100644
---- a/ssl/ssl_lib.c
-+++ b/ssl/ssl_lib.c
-@@ -562,6 +562,8 @@ void SSL_free(SSL *s)
+--- openssl-1.0.1l.orig/ssl/ssl_lib.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/ssl_lib.c	2016-12-16 00:03:43.000000000 +0000
+@@ -573,6 +573,8 @@ void SSL_free(SSL *s)
  		sk_OCSP_RESPID_pop_free(s->tlsext_ocsp_ids, OCSP_RESPID_free);
  	if (s->tlsext_ocsp_resp)
  		OPENSSL_free(s->tlsext_ocsp_resp);
@@ -1082,7 +1065,7 @@ index 123f925..6938267 100644
  #endif
  
  	if (s->client_CA != NULL)
-@@ -1952,6 +1954,11 @@ void SSL_CTX_free(SSL_CTX *a)
+@@ -2030,6 +2032,11 @@ void SSL_CTX_free(SSL_CTX *a)
  		ssl_buf_freelist_free(a->rbuf_freelist);
  #endif
  
@@ -1094,7 +1077,7 @@ index 123f925..6938267 100644
  	OPENSSL_free(a);
  	}
  
-@@ -2504,6 +2511,10 @@ int SSL_get_error(const SSL *s,int i)
+@@ -2579,6 +2586,10 @@ int SSL_get_error(const SSL *s,int i)
  		{
  		return(SSL_ERROR_WANT_X509_LOOKUP);
  		}
@@ -1105,11 +1088,9 @@ index 123f925..6938267 100644
  
  	if (i == 0)
  		{
-diff --git a/ssl/ssl_locl.h b/ssl/ssl_locl.h
-index fcc6d80..3ce3d60 100644
---- a/ssl/ssl_locl.h
-+++ b/ssl/ssl_locl.h
-@@ -378,6 +378,7 @@
+--- openssl-1.0.1l.orig/ssl/ssl_locl.h	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/ssl_locl.h	2016-12-16 00:03:43.000000000 +0000
+@@ -379,6 +379,7 @@
   * (currently this also goes into algorithm2) */
  #define TLS1_STREAM_MAC 0x04
  
@@ -1117,15 +1098,15 @@ index fcc6d80..3ce3d60 100644
  
  
  /*
-@@ -1008,6 +1009,7 @@ int ssl3_check_cert_and_algorithm(SSL *s);
- int ssl3_check_finished(SSL *s);
+@@ -1019,6 +1020,7 @@ int ssl3_check_cert_and_algorithm(SSL *s
+ #ifndef OPENSSL_NO_TLSEXT
  # ifndef OPENSSL_NO_NEXTPROTONEG
  int ssl3_send_next_proto(SSL *s);
 +int ssl3_send_channel_id(SSL *s);
  # endif
  #endif
  
-@@ -1030,6 +1032,7 @@ int ssl3_get_cert_verify(SSL *s);
+@@ -1041,6 +1043,7 @@ int ssl3_get_cert_verify(SSL *s);
  #ifndef OPENSSL_NO_NEXTPROTONEG
  int ssl3_get_next_proto(SSL *s);
  #endif
@@ -1133,7 +1114,7 @@ index fcc6d80..3ce3d60 100644
  
  int dtls1_send_hello_request(SSL *s);
  int dtls1_send_server_hello(SSL *s);
-@@ -1072,6 +1075,7 @@ void ssl_free_wbio_buffer(SSL *s);
+@@ -1083,6 +1086,7 @@ void ssl_free_wbio_buffer(SSL *s);
  int tls1_change_cipher_state(SSL *s, int which);
  int tls1_setup_key_block(SSL *s);
  int tls1_enc(SSL *s, int snd);
@@ -1141,7 +1122,7 @@ index fcc6d80..3ce3d60 100644
  int tls1_final_finish_mac(SSL *s,
  	const char *str, int slen, unsigned char *p);
  int tls1_cert_verify_mac(SSL *s, int md_nid, unsigned char *p);
-@@ -1127,6 +1131,8 @@ int tls12_get_sigandhash(unsigned char *p, const EVP_PKEY *pk,
+@@ -1138,6 +1142,8 @@ int tls12_get_sigandhash(unsigned char *
  int tls12_get_sigid(const EVP_PKEY *pk);
  const EVP_MD *tls12_get_hash(unsigned char hash_alg);
  
@@ -1150,11 +1131,9 @@ index fcc6d80..3ce3d60 100644
  #endif
  
  int ssl3_can_cutthrough(const SSL *s);
-diff --git a/ssl/ssl_sess.c b/ssl/ssl_sess.c
-index 2a378c3..dd3b4a6 100644
---- a/ssl/ssl_sess.c
-+++ b/ssl/ssl_sess.c
-@@ -1151,6 +1151,17 @@ int (*SSL_CTX_get_client_cert_cb(SSL_CTX *ctx))(SSL * ssl, X509 ** x509 , EVP_PK
+--- openssl-1.0.1l.orig/ssl/ssl_sess.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/ssl_sess.c	2016-12-16 00:03:43.000000000 +0000
+@@ -1146,6 +1146,17 @@ int (*SSL_CTX_get_client_cert_cb(SSL_CTX
  	return ctx->client_cert_cb;
  	}
  
@@ -1172,11 +1151,9 @@ index 2a378c3..dd3b4a6 100644
  #ifndef OPENSSL_NO_ENGINE
  int SSL_CTX_set_client_cert_engine(SSL_CTX *ctx, ENGINE *e)
  	{
-diff --git a/ssl/t1_enc.c b/ssl/t1_enc.c
-index 0c4cdde..f396674 100644
---- a/ssl/t1_enc.c
-+++ b/ssl/t1_enc.c
-@@ -895,54 +895,79 @@ int tls1_cert_verify_mac(SSL *s, int md_nid, unsigned char *out)
+--- openssl-1.0.1l.orig/ssl/t1_enc.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/t1_enc.c	2016-12-16 00:03:43.000000000 +0000
+@@ -895,54 +895,79 @@ int tls1_cert_verify_mac(SSL *s, int md_
  	return((int)ret);
  	}
  
@@ -1241,10 +1218,10 @@ index 0c4cdde..f396674 100644
 +	unsigned char buf2[12];
  	int err=0;
 -	const EVP_MD *md; 
+-
+-	q=buf;
 +	int digests_len;
  
--	q=buf;
--
 -	if (s->s3->handshake_buffer) 
 +	if (s->s3->handshake_buffer)
  		if (!ssl3_digest_cached_records(s))
@@ -1289,11 +1266,9 @@ index 0c4cdde..f396674 100644
  
  	if (err)
  		return 0;
-diff --git a/ssl/t1_lib.c b/ssl/t1_lib.c
-index bddffd9..1a56a97 100644
---- a/ssl/t1_lib.c
-+++ b/ssl/t1_lib.c
-@@ -641,6 +641,19 @@ unsigned char *ssl_add_clienthello_tlsext(SSL *s, unsigned char *p, unsigned cha
+--- openssl-1.0.1l.orig/ssl/t1_lib.c	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/t1_lib.c	2016-12-16 00:03:43.000000000 +0000
+@@ -649,6 +649,19 @@ unsigned char *ssl_add_clienthello_tlsex
  		}
  #endif
  
@@ -1311,9 +1286,9 @@ index bddffd9..1a56a97 100644
 +		}
 +
  #ifndef OPENSSL_NO_SRTP
-         if(SSL_get_srtp_profiles(s))
+ 	if(SSL_IS_DTLS(s) && SSL_get_srtp_profiles(s))
                  {
-@@ -881,6 +894,19 @@ unsigned char *ssl_add_serverhello_tlsext(SSL *s, unsigned char *p, unsigned cha
+@@ -890,6 +903,19 @@ unsigned char *ssl_add_serverhello_tlsex
  		}
  #endif
  
@@ -1331,9 +1306,9 @@ index bddffd9..1a56a97 100644
 +		}
 +
  	if ((extdatalen = ret-orig-2)== 0) 
- 		return p;
+ 		return orig;
  
-@@ -1442,6 +1468,16 @@ int ssl_parse_clienthello_tlsext(SSL *s, unsigned char **p, unsigned char *d, in
+@@ -1461,6 +1487,16 @@ int ssl_parse_clienthello_tlsext(SSL *s,
  			}
  #endif
  
@@ -1349,8 +1324,8 @@ index bddffd9..1a56a97 100644
 +
  		/* session ticket processed earlier */
  #ifndef OPENSSL_NO_SRTP
- 		else if (type == TLSEXT_TYPE_use_srtp)
-@@ -1672,6 +1708,15 @@ int ssl_parse_serverhello_tlsext(SSL *s, unsigned char **p, unsigned char *d, in
+ 		else if (SSL_IS_DTLS(s) && SSL_get_srtp_profiles(s)
+@@ -1695,6 +1731,15 @@ int ssl_parse_serverhello_tlsext(SSL *s,
  			s->s3->next_proto_neg_seen = 1;
  			}
  #endif
@@ -1366,7 +1341,7 @@ index bddffd9..1a56a97 100644
  		else if (type == TLSEXT_TYPE_renegotiate)
  			{
  			if(!ssl_parse_serverhello_renegotiate_ext(s, data, size, al))
-@@ -2727,3 +2772,74 @@ tls1_heartbeat(SSL *s)
+@@ -2757,3 +2802,74 @@ tls1_heartbeat(SSL *s)
  	return ret;
  	}
  #endif
@@ -1441,11 +1416,9 @@ index bddffd9..1a56a97 100644
 +
 +	return 1;
 +	}
-diff --git a/ssl/tls1.h b/ssl/tls1.h
-index c992091..12f2f21 100644
---- a/ssl/tls1.h
-+++ b/ssl/tls1.h
-@@ -254,6 +254,10 @@ extern "C" {
+--- openssl-1.0.1l.orig/ssl/tls1.h	2016-12-16 00:03:42.000000000 +0000
++++ openssl-1.0.1l/ssl/tls1.h	2016-12-16 00:03:43.000000000 +0000
+@@ -257,6 +257,10 @@ extern "C" {
  #define TLSEXT_TYPE_next_proto_neg		13172
  #endif
  
@@ -1456,6 +1429,3 @@ index c992091..12f2f21 100644
  /* NameType value from RFC 3546 */
  #define TLSEXT_NAMETYPE_host_name 0
  /* status request value from RFC 3546 */
--- 
-1.9.1.423.g4596e3a
-

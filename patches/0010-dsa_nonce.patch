@@ -23,11 +23,9 @@ private key along with entropy.
  crypto/ecdsa/ecs_sign.c | 10 ++++++-
  15 files changed, 185 insertions(+), 20 deletions(-)
 
-diff --git a/crypto/bn/bn.h b/crypto/bn/bn.h
-index f34248e..9281ce5 100644
---- a/crypto/bn/bn.h
-+++ b/crypto/bn/bn.h
-@@ -692,6 +692,10 @@ const BIGNUM *BN_get0_nist_prime_256(void);
+--- openssl-1.0.1l.orig/crypto/bn/bn.h	2016-12-16 00:04:57.000000000 +0000
++++ openssl-1.0.1l/crypto/bn/bn.h	2016-12-16 00:05:05.000000000 +0000
+@@ -694,6 +694,10 @@ const BIGNUM *BN_get0_nist_prime_256(voi
  const BIGNUM *BN_get0_nist_prime_384(void);
  const BIGNUM *BN_get0_nist_prime_521(void);
  
@@ -38,7 +36,7 @@ index f34248e..9281ce5 100644
  /* library internal functions */
  
  #define bn_expand(a,bits) ((((((bits+BN_BITS2-1))/BN_BITS2)) <= (a)->dmax)?\
-@@ -842,6 +846,7 @@ void ERR_load_BN_strings(void);
+@@ -855,6 +859,7 @@ void ERR_load_BN_strings(void);
  #define BN_F_BN_EXP					 123
  #define BN_F_BN_EXPAND2					 108
  #define BN_F_BN_EXPAND_INTERNAL				 120
@@ -46,7 +44,7 @@ index f34248e..9281ce5 100644
  #define BN_F_BN_GF2M_MOD				 131
  #define BN_F_BN_GF2M_MOD_EXP				 132
  #define BN_F_BN_GF2M_MOD_MUL				 133
-@@ -881,6 +886,7 @@ void ERR_load_BN_strings(void);
+@@ -894,6 +899,7 @@ void ERR_load_BN_strings(void);
  #define BN_R_NOT_INITIALIZED				 107
  #define BN_R_NO_INVERSE					 108
  #define BN_R_NO_SOLUTION				 116
@@ -54,10 +52,8 @@ index f34248e..9281ce5 100644
  #define BN_R_P_IS_NOT_PRIME				 112
  #define BN_R_TOO_MANY_ITERATIONS			 113
  #define BN_R_TOO_MANY_TEMPORARY_VARIABLES		 109
-diff --git a/crypto/bn/bn_err.c b/crypto/bn/bn_err.c
-index cfe2eb9..f722b52 100644
---- a/crypto/bn/bn_err.c
-+++ b/crypto/bn/bn_err.c
+--- openssl-1.0.1l.orig/crypto/bn/bn_err.c	2016-12-16 00:04:57.000000000 +0000
++++ openssl-1.0.1l/crypto/bn/bn_err.c	2016-12-16 00:05:05.000000000 +0000
 @@ -87,6 +87,7 @@ static ERR_STRING_DATA BN_str_functs[]=
  {ERR_FUNC(BN_F_BN_EXP),	"BN_exp"},
  {ERR_FUNC(BN_F_BN_EXPAND2),	"bn_expand2"},
@@ -74,10 +70,8 @@ index cfe2eb9..f722b52 100644
  {ERR_REASON(BN_R_P_IS_NOT_PRIME)         ,"p is not prime"},
  {ERR_REASON(BN_R_TOO_MANY_ITERATIONS)    ,"too many iterations"},
  {ERR_REASON(BN_R_TOO_MANY_TEMPORARY_VARIABLES),"too many temporary variables"},
-diff --git a/crypto/bn/bn_rand.c b/crypto/bn/bn_rand.c
-index b376c28..55676f0 100644
---- a/crypto/bn/bn_rand.c
-+++ b/crypto/bn/bn_rand.c
+--- openssl-1.0.1l.orig/crypto/bn/bn_rand.c	2016-12-16 00:04:57.000000000 +0000
++++ openssl-1.0.1l/crypto/bn/bn_rand.c	2016-12-16 00:05:05.000000000 +0000
 @@ -114,6 +114,7 @@
  #include "cryptlib.h"
  #include "bn_lcl.h"
@@ -86,7 +80,7 @@ index b376c28..55676f0 100644
  
  static int bnrand(int pseudorand, BIGNUM *rnd, int bits, int top, int bottom)
  	{
-@@ -303,3 +304,72 @@ int	BN_pseudo_rand_range(BIGNUM *r, const BIGNUM *range)
+@@ -303,3 +304,72 @@ int	BN_pseudo_rand_range(BIGNUM *r, cons
  	{
  	return bn_rand_range(1, r, range);
  	}
@@ -159,10 +153,8 @@ index b376c28..55676f0 100644
 +	return ret;
 +	}
 +#endif  /* OPENSSL_NO_SHA512 */
-diff --git a/crypto/dsa/dsa.h b/crypto/dsa/dsa.h
-index b448d2a..71ef572 100644
---- a/crypto/dsa/dsa.h
-+++ b/crypto/dsa/dsa.h
+--- openssl-1.0.1l.orig/crypto/dsa/dsa.h	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/dsa/dsa.h	2016-12-16 00:05:05.000000000 +0000
 @@ -96,6 +96,10 @@
                                                * faster variable sliding window method to
                                                * be used for all exponents.
@@ -172,9 +164,9 @@ index b448d2a..71ef572 100644
 +						random). This strengthens DSA against a
 +						weak PRNG. */
  
- 
  /* If this flag is set the DSA method is FIPS compliant and can be used
-@@ -131,8 +135,9 @@ struct dsa_method
+  * in FIPS mode. This is set in the validated module method. If an
+@@ -130,8 +134,9 @@ struct dsa_method
  	{
  	const char *name;
  	DSA_SIG * (*dsa_do_sign)(const unsigned char *dgst, int dlen, DSA *dsa);
@@ -186,7 +178,7 @@ index b448d2a..71ef572 100644
  	int (*dsa_do_verify)(const unsigned char *dgst, int dgst_len,
  			     DSA_SIG *sig, DSA *dsa);
  	int (*dsa_mod_exp)(DSA *dsa, BIGNUM *rr, BIGNUM *a1, BIGNUM *p1,
-@@ -325,6 +330,7 @@ void ERR_load_DSA_strings(void);
+@@ -317,6 +322,7 @@ void ERR_load_DSA_strings(void);
  #define DSA_R_MISSING_PARAMETERS			 101
  #define DSA_R_MODULUS_TOO_LARGE				 103
  #define DSA_R_NEED_NEW_SETUP_VALUES			 110
@@ -194,11 +186,9 @@ index b448d2a..71ef572 100644
  #define DSA_R_NON_FIPS_DSA_METHOD			 111
  #define DSA_R_NO_PARAMETERS_SET				 107
  #define DSA_R_PARAMETER_ENCODING_ERROR			 105
-diff --git a/crypto/dsa/dsa_err.c b/crypto/dsa/dsa_err.c
-index 00545b7..e6171cc 100644
---- a/crypto/dsa/dsa_err.c
-+++ b/crypto/dsa/dsa_err.c
-@@ -109,6 +109,7 @@ static ERR_STRING_DATA DSA_str_reasons[]=
+--- openssl-1.0.1l.orig/crypto/dsa/dsa_err.c	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/dsa/dsa_err.c	2016-12-16 00:05:05.000000000 +0000
+@@ -109,6 +109,7 @@ static ERR_STRING_DATA DSA_str_reasons[]
  {ERR_REASON(DSA_R_MISSING_PARAMETERS)    ,"missing parameters"},
  {ERR_REASON(DSA_R_MODULUS_TOO_LARGE)     ,"modulus too large"},
  {ERR_REASON(DSA_R_NEED_NEW_SETUP_VALUES) ,"need new setup values"},
@@ -206,10 +196,8 @@ index 00545b7..e6171cc 100644
  {ERR_REASON(DSA_R_NON_FIPS_DSA_METHOD)   ,"non fips dsa method"},
  {ERR_REASON(DSA_R_NO_PARAMETERS_SET)     ,"no parameters set"},
  {ERR_REASON(DSA_R_PARAMETER_ENCODING_ERROR),"parameter encoding error"},
-diff --git a/crypto/dsa/dsa_ossl.c b/crypto/dsa/dsa_ossl.c
-index a865a8c..15f8da2 100644
---- a/crypto/dsa/dsa_ossl.c
-+++ b/crypto/dsa/dsa_ossl.c
+--- openssl-1.0.1l.orig/crypto/dsa/dsa_ossl.c	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/dsa/dsa_ossl.c	2016-12-16 00:05:05.000000000 +0000
 @@ -67,7 +67,9 @@
  #include <openssl/asn1.h>
  
@@ -221,7 +209,7 @@ index a865a8c..15f8da2 100644
  static int dsa_do_verify(const unsigned char *dgst, int dgst_len, DSA_SIG *sig,
  			 DSA *dsa);
  static int dsa_init(DSA *dsa);
-@@ -167,7 +169,8 @@ static DSA_SIG *dsa_do_sign(const unsigned char *dgst, int dlen, DSA *dsa)
+@@ -154,7 +156,8 @@ static DSA_SIG *dsa_do_sign(const unsign
  redo:
  	if ((dsa->kinv == NULL) || (dsa->r == NULL))
  		{
@@ -231,7 +219,7 @@ index a865a8c..15f8da2 100644
  		}
  	else
  		{
-@@ -226,7 +229,9 @@ err:
+@@ -213,7 +216,9 @@ err:
  	return(ret);
  	}
  
@@ -242,7 +230,7 @@ index a865a8c..15f8da2 100644
  	{
  	BN_CTX *ctx;
  	BIGNUM k,kq,*K,*kinv=NULL,*r=NULL;
-@@ -252,8 +257,21 @@ static int dsa_sign_setup(DSA *dsa, BN_CTX *ctx_in, BIGNUM **kinvp, BIGNUM **rp)
+@@ -239,8 +244,21 @@ static int dsa_sign_setup(DSA *dsa, BN_C
  
  	/* Get random k */
  	do
@@ -266,11 +254,9 @@ index a865a8c..15f8da2 100644
  	if ((dsa->flags & DSA_FLAG_NO_EXP_CONSTTIME) == 0)
  		{
  		BN_set_flags(&k, BN_FLG_CONSTTIME);
-diff --git a/crypto/dsa/dsa_sign.c b/crypto/dsa/dsa_sign.c
-index c3cc364..8ace300 100644
---- a/crypto/dsa/dsa_sign.c
-+++ b/crypto/dsa/dsa_sign.c
-@@ -86,7 +86,14 @@ int DSA_sign_setup(DSA *dsa, BN_CTX *ctx_in, BIGNUM **kinvp, BIGNUM **rp)
+--- openssl-1.0.1l.orig/crypto/dsa/dsa_sign.c	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/dsa/dsa_sign.c	2016-12-16 00:05:05.000000000 +0000
+@@ -86,7 +86,14 @@ int DSA_sign_setup(DSA *dsa, BN_CTX *ctx
  		return 0;
  		}
  #endif
@@ -286,11 +272,9 @@ index c3cc364..8ace300 100644
  	}
  
  DSA_SIG *DSA_SIG_new(void)
-diff --git a/crypto/ec/ec.h b/crypto/ec/ec.h
-index dfe8710..d008a0d 100644
---- a/crypto/ec/ec.h
-+++ b/crypto/ec/ec.h
-@@ -819,6 +819,17 @@ void *EC_KEY_insert_key_method_data(EC_KEY *key, void *data,
+--- openssl-1.0.1l.orig/crypto/ec/ec.h	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/ec/ec.h	2016-12-16 00:05:05.000000000 +0000
+@@ -819,6 +819,17 @@ void *EC_KEY_insert_key_method_data(EC_K
  /* wrapper functions for the underlying EC_GROUP object */
  void EC_KEY_set_asn1_flag(EC_KEY *eckey, int asn1_flag);
  
@@ -308,10 +292,8 @@ index dfe8710..d008a0d 100644
  /** Creates a table of pre-computed multiples of the generator to 
   *  accelerate further EC_KEY operations.
   *  \param  key  EC_KEY object
-diff --git a/crypto/ec/ec_key.c b/crypto/ec/ec_key.c
-index 7fa2475..73dd7b9 100644
---- a/crypto/ec/ec_key.c
-+++ b/crypto/ec/ec_key.c
+--- openssl-1.0.1l.orig/crypto/ec/ec_key.c	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/ec/ec_key.c	2016-12-16 00:05:05.000000000 +0000
 @@ -85,6 +85,7 @@ EC_KEY *EC_KEY_new(void)
  	ret->pub_key = NULL;
  	ret->priv_key= NULL;
@@ -320,7 +302,7 @@ index 7fa2475..73dd7b9 100644
  	ret->conv_form = POINT_CONVERSION_UNCOMPRESSED;
  	ret->references= 1;
  	ret->method_data = NULL;
-@@ -198,6 +199,7 @@ EC_KEY *EC_KEY_copy(EC_KEY *dest, const EC_KEY *src)
+@@ -198,6 +199,7 @@ EC_KEY *EC_KEY_copy(EC_KEY *dest, const
  
  	/* copy the rest */
  	dest->enc_flag  = src->enc_flag;
@@ -328,7 +310,7 @@ index 7fa2475..73dd7b9 100644
  	dest->conv_form = src->conv_form;
  	dest->version   = src->version;
  	dest->flags = src->flags;
-@@ -505,6 +507,16 @@ void EC_KEY_set_enc_flags(EC_KEY *key, unsigned int flags)
+@@ -505,6 +507,16 @@ void EC_KEY_set_enc_flags(EC_KEY *key, u
  	key->enc_flag = flags;
  	}
  
@@ -345,10 +327,8 @@ index 7fa2475..73dd7b9 100644
  point_conversion_form_t EC_KEY_get_conv_form(const EC_KEY *key)
  	{
  	return key->conv_form;
-diff --git a/crypto/ec/ec_lcl.h b/crypto/ec/ec_lcl.h
-index da7967d..6f714c7 100644
---- a/crypto/ec/ec_lcl.h
-+++ b/crypto/ec/ec_lcl.h
+--- openssl-1.0.1l.orig/crypto/ec/ec_lcl.h	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/ec/ec_lcl.h	2016-12-16 00:05:05.000000000 +0000
 @@ -246,6 +246,7 @@ struct ec_key_st {
  	BIGNUM	 *priv_key;
  
@@ -357,10 +337,8 @@ index da7967d..6f714c7 100644
  	point_conversion_form_t conv_form;
  
  	int 	references;
-diff --git a/crypto/ecdsa/ecdsa.h b/crypto/ecdsa/ecdsa.h
-index 7fb5254..dc6a36b 100644
---- a/crypto/ecdsa/ecdsa.h
-+++ b/crypto/ecdsa/ecdsa.h
+--- openssl-1.0.1l.orig/crypto/ecdsa/ecdsa.h	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/ecdsa/ecdsa.h	2016-12-16 00:05:05.000000000 +0000
 @@ -250,6 +250,7 @@ void ERR_load_ECDSA_strings(void);
  #define ECDSA_R_ERR_EC_LIB				 102
  #define ECDSA_R_MISSING_PARAMETERS			 103
@@ -369,11 +347,9 @@ index 7fb5254..dc6a36b 100644
  #define ECDSA_R_NON_FIPS_METHOD				 107
  #define ECDSA_R_RANDOM_NUMBER_GENERATION_FAILED		 104
  #define ECDSA_R_SIGNATURE_MALLOC_FAILED			 105
-diff --git a/crypto/ecdsa/ecs_err.c b/crypto/ecdsa/ecs_err.c
-index 81542e6..7406c6d 100644
---- a/crypto/ecdsa/ecs_err.c
-+++ b/crypto/ecdsa/ecs_err.c
-@@ -85,6 +85,7 @@ static ERR_STRING_DATA ECDSA_str_reasons[]=
+--- openssl-1.0.1l.orig/crypto/ecdsa/ecs_err.c	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/ecdsa/ecs_err.c	2016-12-16 00:05:05.000000000 +0000
+@@ -85,6 +85,7 @@ static ERR_STRING_DATA ECDSA_str_reasons
  {ERR_REASON(ECDSA_R_ERR_EC_LIB)          ,"err ec lib"},
  {ERR_REASON(ECDSA_R_MISSING_PARAMETERS)  ,"missing parameters"},
  {ERR_REASON(ECDSA_R_NEED_NEW_SETUP_VALUES),"need new setup values"},
@@ -381,10 +357,8 @@ index 81542e6..7406c6d 100644
  {ERR_REASON(ECDSA_R_NON_FIPS_METHOD)     ,"non fips method"},
  {ERR_REASON(ECDSA_R_RANDOM_NUMBER_GENERATION_FAILED),"random number generation failed"},
  {ERR_REASON(ECDSA_R_SIGNATURE_MALLOC_FAILED),"signature malloc failed"},
-diff --git a/crypto/ecdsa/ecs_locl.h b/crypto/ecdsa/ecs_locl.h
-index cb3be13..46f7ad9 100644
---- a/crypto/ecdsa/ecs_locl.h
-+++ b/crypto/ecdsa/ecs_locl.h
+--- openssl-1.0.1l.orig/crypto/ecdsa/ecs_locl.h	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/ecdsa/ecs_locl.h	2016-12-16 00:05:05.000000000 +0000
 @@ -70,8 +70,9 @@ struct ecdsa_method
  	const char *name;
  	ECDSA_SIG *(*ecdsa_do_sign)(const unsigned char *dgst, int dgst_len, 
@@ -397,10 +371,8 @@ index cb3be13..46f7ad9 100644
  	int (*ecdsa_do_verify)(const unsigned char *dgst, int dgst_len, 
  			const ECDSA_SIG *sig, EC_KEY *eckey);
  #if 0
-diff --git a/crypto/ecdsa/ecs_ossl.c b/crypto/ecdsa/ecs_ossl.c
-index 7725935..325aca8 100644
---- a/crypto/ecdsa/ecs_ossl.c
-+++ b/crypto/ecdsa/ecs_ossl.c
+--- openssl-1.0.1l.orig/crypto/ecdsa/ecs_ossl.c	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/ecdsa/ecs_ossl.c	2016-12-16 00:05:05.000000000 +0000
 @@ -60,11 +60,13 @@
  #include <openssl/err.h>
  #include <openssl/obj_mac.h>
@@ -429,7 +401,7 @@ index 7725935..325aca8 100644
  {
  	BN_CTX   *ctx = NULL;
  	BIGNUM	 *k = NULL, *r = NULL, *order = NULL, *X = NULL;
-@@ -136,11 +139,28 @@ static int ecdsa_sign_setup(EC_KEY *eckey, BN_CTX *ctx_in, BIGNUM **kinvp,
+@@ -136,11 +139,28 @@ static int ecdsa_sign_setup(EC_KEY *ecke
  	{
  		/* get random k */	
  		do
@@ -462,7 +434,7 @@ index 7725935..325aca8 100644
  			}
  		while (BN_is_zero(k));
  
-@@ -282,7 +302,7 @@ static ECDSA_SIG *ecdsa_do_sign(const unsigned char *dgst, int dgst_len,
+@@ -282,7 +302,7 @@ static ECDSA_SIG *ecdsa_do_sign(const un
  	{
  		if (in_kinv == NULL || in_r == NULL)
  		{
@@ -471,10 +443,8 @@ index 7725935..325aca8 100644
  			{
  				ECDSAerr(ECDSA_F_ECDSA_DO_SIGN,ERR_R_ECDSA_LIB);
  				goto err;
-diff --git a/crypto/ecdsa/ecs_sign.c b/crypto/ecdsa/ecs_sign.c
-index 353d5af..ea79a24 100644
---- a/crypto/ecdsa/ecs_sign.c
-+++ b/crypto/ecdsa/ecs_sign.c
+--- openssl-1.0.1l.orig/crypto/ecdsa/ecs_sign.c	2016-12-16 00:04:58.000000000 +0000
++++ openssl-1.0.1l/crypto/ecdsa/ecs_sign.c	2016-12-16 00:05:05.000000000 +0000
 @@ -58,6 +58,7 @@
  #include <openssl/engine.h>
  #endif
@@ -483,7 +453,7 @@ index 353d5af..ea79a24 100644
  
  ECDSA_SIG *ECDSA_do_sign(const unsigned char *dgst, int dlen, EC_KEY *eckey)
  {
-@@ -102,5 +103,12 @@ int ECDSA_sign_setup(EC_KEY *eckey, BN_CTX *ctx_in, BIGNUM **kinvp,
+@@ -102,5 +103,12 @@ int ECDSA_sign_setup(EC_KEY *eckey, BN_C
  	ECDSA_DATA *ecdsa = ecdsa_check(eckey);
  	if (ecdsa == NULL)
  		return 0;
@@ -497,6 +467,3 @@ index 353d5af..ea79a24 100644
 +		}
 +	return ecdsa->meth->ecdsa_sign_setup(eckey, ctx_in, kinvp, rp, NULL, 0);
  }
--- 
-1.8.5.1
-

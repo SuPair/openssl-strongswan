@@ -1,5 +1,5 @@
---- openssl-1.0.1e.orig/crypto/bio/b_sock.c	2013-03-05 19:12:46.758376542 +0000
-+++ openssl-1.0.1e/crypto/bio/b_sock.c	2013-03-05 19:12:46.948378599 +0000
+--- openssl-1.0.1l.orig/crypto/bio/b_sock.c	2016-12-16 00:04:02.000000000 +0000
++++ openssl-1.0.1l/crypto/bio/b_sock.c	2016-12-16 00:04:10.000000000 +0000
 @@ -629,7 +629,8 @@ int BIO_get_accept_socket(char *host, in
  		struct sockaddr_in6 sa_in6;
  #endif
@@ -33,8 +33,8 @@
  
  	if (h == NULL || strcmp(h,"*") == 0)
  		server.sa_in.sin_addr.s_addr=INADDR_ANY;
---- openssl-1.0.1e.orig/crypto/x509v3/v3_utl.c	2013-03-05 19:12:46.768376649 +0000
-+++ openssl-1.0.1e/crypto/x509v3/v3_utl.c	2013-03-05 19:12:46.948378599 +0000
+--- openssl-1.0.1l.orig/crypto/x509v3/v3_utl.c	2016-12-16 00:04:06.000000000 +0000
++++ openssl-1.0.1l/crypto/x509v3/v3_utl.c	2016-12-16 00:04:10.000000000 +0000
 @@ -365,7 +365,7 @@ char *hex_to_string(const unsigned char
  	char *tmp, *q;
  	const unsigned char *p;

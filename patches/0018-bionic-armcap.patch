@@ -18,11 +18,9 @@ Change-Id: Ic792583da5ccf601afc10828b1a666d24b903a19
  crypto/armcap.c | 8 ++++++++
  1 file changed, 8 insertions(+)
 
-diff --git a/crypto/armcap.c b/crypto/armcap.c
-index 7e46d07..59b7494 100644
---- a/crypto/armcap.c
-+++ b/crypto/armcap.c
-@@ -68,6 +68,14 @@ static unsigned long (*getauxval)(unsigned long) = NULL;
+--- openssl-1.0.1l.orig/crypto/armcap.c	2016-12-16 00:06:24.000000000 +0000
++++ openssl-1.0.1l/crypto/armcap.c	2016-12-16 00:06:32.000000000 +0000
+@@ -68,6 +68,14 @@ static unsigned long (*getauxval)(unsign
  # define HWCAP_CE_SHA256	(1 << 6)
  #endif
  
@@ -37,6 +35,3 @@ index 7e46d07..59b7494 100644
  void OPENSSL_cpuid_setup(void)
  	{
  	char *e;
--- 
-2.2.0.rc0.207.ga3a616c
-

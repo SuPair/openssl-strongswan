@@ -12,11 +12,9 @@ OpenSSL's configuration.
  ssl/tls1.h   | 14 ++++++++------
  2 files changed, 20 insertions(+), 19 deletions(-)
 
-diff --git a/ssl/s3_lib.c b/ssl/s3_lib.c
-index f84da7f..e016fc8 100644
---- a/ssl/s3_lib.c
-+++ b/ssl/s3_lib.c
-@@ -2828,35 +2828,34 @@ OPENSSL_GLOBAL SSL_CIPHER ssl3_ciphers[]={
+--- openssl-1.0.1l.orig/ssl/s3_lib.c	2016-12-16 00:06:08.000000000 +0000
++++ openssl-1.0.1l/ssl/s3_lib.c	2016-12-16 00:06:09.000000000 +0000
+@@ -2828,35 +2828,34 @@ OPENSSL_GLOBAL SSL_CIPHER ssl3_ciphers[]
  
  #ifndef OPENSSL_NO_PSK
      /* ECDH PSK ciphersuites from RFC 5489 */
@@ -64,11 +62,9 @@ index f84da7f..e016fc8 100644
  	256,
  	256,
  	},
-diff --git a/ssl/tls1.h b/ssl/tls1.h
-index ec8948d..51d073d 100644
---- a/ssl/tls1.h
-+++ b/ssl/tls1.h
-@@ -531,9 +531,11 @@ SSL_CTX_callback_ctrl(ssl,SSL_CTRL_SET_TLSEXT_TICKET_KEY_CB,(void (*)(void))cb)
+--- openssl-1.0.1l.orig/ssl/tls1.h	2016-12-16 00:06:08.000000000 +0000
++++ openssl-1.0.1l/ssl/tls1.h	2016-12-16 00:06:09.000000000 +0000
+@@ -535,9 +535,11 @@ SSL_CTX_callback_ctrl(ssl,SSL_CTRL_SET_T
  #define TLS1_CK_ECDH_RSA_WITH_AES_128_GCM_SHA256        0x0300C031
  #define TLS1_CK_ECDH_RSA_WITH_AES_256_GCM_SHA384        0x0300C032
  
@@ -83,7 +79,7 @@ index ec8948d..51d073d 100644
  
  /* XXX
   * Inconsistency alert:
-@@ -686,9 +688,9 @@ SSL_CTX_callback_ctrl(ssl,SSL_CTRL_SET_TLSEXT_TICKET_KEY_CB,(void (*)(void))cb)
+@@ -690,9 +692,9 @@ SSL_CTX_callback_ctrl(ssl,SSL_CTRL_SET_T
  #define TLS1_TXT_ECDH_RSA_WITH_AES_128_GCM_SHA256       "ECDH-RSA-AES128-GCM-SHA256"
  #define TLS1_TXT_ECDH_RSA_WITH_AES_256_GCM_SHA384       "ECDH-RSA-AES256-GCM-SHA384"
  
@@ -96,5 +92,3 @@ index ec8948d..51d073d 100644
  
  #define TLS_CT_RSA_SIGN			1
  #define TLS_CT_DSS_SIGN			2
--- 
-2.0.0.526.g5318336
