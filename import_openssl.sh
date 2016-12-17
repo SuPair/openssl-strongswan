@@ -54,7 +54,7 @@ function usage() {
   echo "  ./import_openssl.sh apply [-l] <patch/*.patch>"
   echo "  ./import_openssl.sh update"
   echo "  ./import_openssl.sh regenerate <patch/*.patch>"
-  echo "  ./import_openssl.sh generate <patch/*.patch> </path/to/openssl-*.tar.gz>"
+  echo "  ./import_openssl.sh generate <patch/*.patch>"
   echo "  ./import_openssl.sh regenerate-all </path/to/openssl-*.tar.gz>"
   exit 1
 }
@@ -116,9 +116,9 @@ function main() {
   elif [ "$command" = "generate" ]; then
     declare -r patch=$1
     shift || usage "No patch file specified."
-    declare -r tar=$1
-    shift || usage "No tar file specified."
-    generate $patch $tar
+    [ -d $OPENSSL_DIR ] || usage "$OPENSSL_DIR not found, did you mean to use generate?"
+    [ -d $OPENSSL_DIR_ORIG ] || usage "$OPENSSL_DIR_ORIG not found, did you mean to use generate?"
+    generate $patch
   elif [ "$command" = "regenerate-all" ]; then
     declare -r tar=$1
     shift || usage "No tar file specified."
@@ -655,20 +655,8 @@ function regenerate() {
 
 function generate() {
   declare -r patch=$1
-  declare -r OPENSSL_SOURCE=$2
 
-  untar $OPENSSL_SOURCE
-  applypatches $OPENSSL_DIR_ORIG $patch
-  prune
-
-  for i in $NEEDED_SOURCES; do
-    echo "Restoring $i"
-    rm -r $OPENSSL_DIR/$i
-    cp -rf $i $OPENSSL_DIR/$i
-  done
-
-  generatepatch $patch
-  cleantar
+  generatepatch $patch all
 }
 
 # Find all files in a sub-directory that are encoded in ISO-8859
@@ -753,19 +741,27 @@ function applypatches () {
 
 function generatepatch() {
   declare -r patch=$1
+  declare -r all=$2
 
   # Cleanup stray files before generating patch
   find $OPENSSL_DIR -type f -name "*.orig" -print0 | xargs -0 rm -f
   find $OPENSSL_DIR -type f -name "*~" -print0 | xargs -0 rm -f
 
-  # Find the files the patch touches and only keep those in the output patch
-  declare -r sources=`patch -p1 --dry-run -d $OPENSSL_DIR_ORIG < $patch  | awk '/^(patching|checking) file / { print $3 }'`
-
   rm -f $patch
   touch $patch
+
+  if [ "$all" == "all" ]; then
+    # Find all changed files and put those in the output patch
+    declare -r sources=`diff -qrn $OPENSSL_DIR_ORIG $OPENSSL_DIR | awk '/^Files .+ and .+ differ$/ { print $4 } /^Only in .+: .+$/ { print $3 $4 }' | sed -e 's/:/\//g' | cut -d'/' -f2-`
+  else
+    # Find the files the patch touches and only keep those in the output patch
+    declare -r sources=`patch -p1 --dry-run -d $OPENSSL_DIR_ORIG < $patch  | awk '/^(patching|checking) file / { print $3 }'`
+  fi
+  
   for i in $sources; do
     LC_ALL=C TZ=UTC0 diff -Naup $OPENSSL_DIR_ORIG/$i $OPENSSL_DIR/$i >> $patch && die "ERROR: No diff for patch $path in file $i"
   done
+  
   echo "Generated patch $patch"
   echo "NOTE To make sure there are not unwanted changes from conflicting patches, be sure to review the generated patch."
 }
