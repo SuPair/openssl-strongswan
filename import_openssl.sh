@@ -51,7 +51,7 @@ function usage() {
   echo "Usage:"
   echo "  ./import_openssl.sh import </path/to/openssl-*.tar.gz>"
   echo "  ./import_openssl.sh untar </path/to/openssl-*.tar.gz>"
-  echo "  ./import_openssl.sh apply <patch/*.patch>"
+  echo "  ./import_openssl.sh apply [-l] <patch/*.patch>"
   echo "  ./import_openssl.sh update"
   echo "  ./import_openssl.sh regenerate <patch/*.patch>"
   echo "  ./import_openssl.sh generate <patch/*.patch> </path/to/openssl-*.tar.gz>"
@@ -96,11 +96,13 @@ function main() {
     shift || usage "No tar file specified."
     untar $tar
   elif [ "$command" = "apply" ]; then
+    loose=$1
+    if [ "$loose" == "-l" ]; then shift; else loose=""; fi
     declare -r patch=$1
     shift || usage "No patch file specified."
     [ -d $OPENSSL_DIR ] || usage "$OPENSSL_DIR not found, did you forget to untar?"
     [ -d $OPENSSL_DIR_ORIG ] || usage "$OPENSSL_DIR_ORIG not found, did you forget to untar?"
-    applypatch $patch
+    applypatch $patch $loose
   elif [ "$command" = "update" ]; then
     [ -d $OPENSSL_DIR ] || usage "$OPENSSL_DIR not found, did you forget to untar?"
     [ -d $OPENSSL_DIR_ORIG ] || usage "$OPENSSL_DIR_ORIG not found, did you forget to untar?"
@@ -715,9 +717,10 @@ function cleantar() {
 
 function applypatch () {
     declare -r patch=$1
+    declare -r loose=$2
 
-    echo "Applying patch $patch"
-    patch -p1 -d $OPENSSL_DIR < $patch || die "Could not apply $patch. Fix source and run: $0 regenerate $patch"
+    if [ "$loose" == "-l" ]; then echo "*LOOSELY* Applying patch $patch"; else echo "Applying patch $patch"; fi
+    patch ${loose} -p1 -d $OPENSSL_DIR < $patch || die "Could not apply $patch. Fix source and run: $0 regenerate $patch"
 
     # Cleanup patch output
     find $OPENSSL_DIR \( -type f -o -type l \) -name "*.orig" -print0 | xargs -0 rm -f
