@@ -53,6 +53,7 @@ function usage() {
   echo "  ./import_openssl.sh untar </path/to/openssl-*.tar.gz>"
   echo "  ./import_openssl.sh apply [-l] <patch/*.patch>"
   echo "  ./import_openssl.sh update"
+  echo "  ./import_openssl.sh revert"
   echo "  ./import_openssl.sh regenerate <patch/*.patch>"
   echo "  ./import_openssl.sh generate <patch/*.patch>"
   echo "  ./import_openssl.sh regenerate-all </path/to/openssl-*.tar.gz>"
@@ -86,7 +87,7 @@ function main() {
   fi
 
   declare -r command=$1
-  shift || usage "No command specified. Try import, untar, apply, update, regenerate, generate, or regenerate-all."
+  shift || usage "No command specified. Try import, untar, apply, update, revert, regenerate, generate, or regenerate-all."
   if [ "$command" = "import" ]; then
     declare -r tar=$1
     shift || usage "No tar file specified."
@@ -107,6 +108,10 @@ function main() {
     [ -d $OPENSSL_DIR ] || usage "$OPENSSL_DIR not found, did you forget to untar?"
     [ -d $OPENSSL_DIR_ORIG ] || usage "$OPENSSL_DIR_ORIG not found, did you forget to untar?"
     update
+  elif [ "$command" = "revert" ]; then
+    [ -d $OPENSSL_DIR ] || usage "$OPENSSL_DIR not found, did you forget to untar?"
+    [ -d $OPENSSL_DIR_ORIG ] || usage "$OPENSSL_DIR_ORIG not found, did you forget to untar?"
+    revert
   elif [ "$command" = "regenerate" ]; then
     declare -r patch=$1
     shift || usage "No patch file specified."
@@ -124,7 +129,7 @@ function main() {
     shift || usage "No tar file specified."
     regenerate_all $tar
   else
-    usage "Unknown command specified $command. Try import, untar, apply, update, regenerate, generate, or regenerate-all."
+    usage "Unknown command specified $command. Try import, untar, apply, update, revert, regenerate, generate, or regenerate-all."
   fi
 }
 
@@ -630,6 +635,11 @@ function import() {
 function update() {
   rm -rf $OPENSSL_DIR_ORIG
   cp -RfP $OPENSSL_DIR $OPENSSL_DIR_ORIG
+}
+
+function revert() {
+  rm -rf $OPENSSL_DIR
+  cp -RfP $OPENSSL_DIR_ORIG $OPENSSL_DIR
 }
 
 function regenerate_all() {
